@@ -19,8 +19,8 @@ export const ManagementScreen = () => {
       </div>
 
       <div className={classes.managementContent}>
-        {Array.from(Array(5)).map((val) => {
-          return <ManagementRow key={`management-row-${val}`} />;
+        {Array.from(Array(5)).map((val, index) => {
+          return <ManagementRow key={`management-row-${index}`} />;
         })}
       </div>
     </>

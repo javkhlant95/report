@@ -8,10 +8,14 @@
   font-weight: 600;
 }
 
+.dropDownWrapper {
+  position: relative;
+}
+
 .dropDownButton {
   width: 100%;
   padding: 5px;
-  border: 1px solid gray;
+  border: 1px solid #ddd;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,4 +28,21 @@
 .dropDownButton img {
   width: 20px;
   height: 20px;
+}
+
+.dropDown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ddd;
+  display: none;
+}
+
+.dropDown.show {
+  display: block;
 }
