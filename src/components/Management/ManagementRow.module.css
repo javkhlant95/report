@@ -7,3 +7,34 @@
 .row {
   margin-bottom: 20px;
 }
+
+.boxs {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.singleBox {
+  background: white;
+  width: 13%;
+  height: 80px;
+  text-align: center;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.boxTitle {
+  font-size: 18px;
+}
+
+.boxContent {
+  font-size: 32px;
+}
+
+.boxGoal {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
