@@ -1,0 +1,27 @@
+.vendorFilter {
+  width: 200px;
+}
+
+.vendorFilter > span {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.dropDownButton {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid gray;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropDownButton span {
+  margin-bottom: 0;
+}
+
+.dropDownButton img {
+  width: 20px;
+  height: 20px;
+}

@@ -1,0 +1,19 @@
+.screenHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100px;
+}
+
+.filters {
+  background-color: white;
+  height: 100%;
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.managementContent {
+  padding: 20px;
+}
