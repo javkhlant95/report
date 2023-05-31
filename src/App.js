@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { ManagementScreen } from "./screens/ManagementScreen";
+import { KPIScreen } from "./screens/KPIScreen";
 
 function App() {
   const tabs = ["Management", "KPI", "MAU/DAU", "Supplier", "PickPack"];
@@ -23,7 +24,8 @@ function App() {
         })}
       </div>
       <div className="content">
-        <ManagementScreen />
+        {/* <ManagementScreen /> */}
+        <KPIScreen />
       </div>
     </div>
   );
