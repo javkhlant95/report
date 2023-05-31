@@ -38,7 +38,7 @@ export const options = {
 export const KPIBarChart = ({ data }) => {
   return (
     <div className={classes.bar}>
-      <Bar options={options} data={data} />;
+      <Bar options={options} data={data} />
     </div>
   );
 };
