@@ -28,7 +28,9 @@ export const MauDauBarChart = ({ data, title }) => {
       legend: {
         position: "top",
         align: "start",
-        labels: false,
+        labels: {
+          usePointStyle: true,
+        },
       },
       title: {
         display: true,

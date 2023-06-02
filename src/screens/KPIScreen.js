@@ -3,31 +3,31 @@ import { VendorFilter } from "../components/KPI/VendorFilter";
 import { KPIBarChart } from "../components/KPI/KPIBarChart";
 import { useEffect, useState } from "react";
 
-
 export const KPIScreen = () => {
-  const [orders, setOrders] = useState([])
+  const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`https://api2.ebazaar.mn/api/orders?order_start=2023-05-01&order_end=2023-05-02&page=all`, {
-        method: "GET",
-        headers: {
-          ebazaar_token: localStorage.getItem("ebazaar_token")
+      const res = await fetch(
+        `https://api2.ebazaar.mn/api/orders?order_start=2023-05-01&order_end=2023-05-02&page=all`,
+        {
+          method: "GET",
+          headers: {
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
         }
-        
-      })
+      );
       const data = await res.json();
 
-      setOrders(data.data)
-
+      setOrders(data.data);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchOrders();
-  },[])
+  }, []);
 
   const [labels, setLabels] = useState([
     "January",
@@ -42,10 +42,10 @@ export const KPIScreen = () => {
     "October",
     "November",
     "December",
-  ])
-  
+  ]);
+
   // const NUMBER_BN = { min: 0, max: 6 };
-  
+
   const totalAmount = {
     labels,
     datasets: [
@@ -53,10 +53,23 @@ export const KPIScreen = () => {
         label: "2022",
         data: labels.map(() => Math.round(Math.random() * 70)),
         backgroundColor: "#93eb34",
+        // pointStyle: "circle",
+        borderWidth: 1,
+        pointStyle: "rectRot",
+        pointRadius: 5,
       },
       {
         label: "2023",
-        data: orders.length > 0 ? [0, 0, 0, 0, orders.reduce((acc, cur) => acc + cur.grand_total, 0)] : [],
+        data:
+          orders.length > 0
+            ? [
+                0,
+                0,
+                0,
+                0,
+                orders.reduce((acc, cur) => acc + cur.grand_total, 0),
+              ]
+            : [],
         backgroundColor: "#3461eb",
       },
       {
@@ -66,7 +79,7 @@ export const KPIScreen = () => {
       },
     ],
   };
-  
+
   const deliveredAmount = {
     labels,
     datasets: [
@@ -77,7 +90,18 @@ export const KPIScreen = () => {
       },
       {
         label: "2023",
-        data: orders.length > 0 ? [0, 0, 0, 0, orders.filter((order) => order.status === 3).reduce((acc, cur) => acc + cur.grand_total, 0)]: [],
+        data:
+          orders.length > 0
+            ? [
+                0,
+                0,
+                0,
+                0,
+                orders
+                  .filter((order) => order.status === 3)
+                  .reduce((acc, cur) => acc + cur.grand_total, 0),
+              ]
+            : [],
         backgroundColor: "#3461eb",
       },
       {
@@ -87,7 +111,7 @@ export const KPIScreen = () => {
       },
     ],
   };
-  
+
   const merchant = {
     labels,
     datasets: [
@@ -108,7 +132,7 @@ export const KPIScreen = () => {
       },
     ],
   };
-  
+
   const deliveryRate = {
     labels,
     datasets: [
@@ -119,7 +143,19 @@ export const KPIScreen = () => {
       },
       {
         label: "2023",
-        data: orders.length > 0 ? [0, 0, 0, 0, Math.round(orders.filter((order) => order.status === 3).length * 100 / orders.length)] : [],
+        data:
+          orders.length > 0
+            ? [
+                0,
+                0,
+                0,
+                0,
+                Math.round(
+                  (orders.filter((order) => order.status === 3).length * 100) /
+                    orders.length
+                ),
+              ]
+            : [],
         backgroundColor: "#3461eb",
       },
       {
@@ -130,14 +166,18 @@ export const KPIScreen = () => {
     ],
   };
 
-  const datas = [totalAmount, deliveredAmount, merchant, deliveryRate];
+  // const datas = [totalAmount, deliveredAmount, merchant, deliveryRate];
+  const datas = [
+    { data: totalAmount, title: "Нийт дүн" },
+    { data: deliveredAmount, title: "Хүргэсэн дүн" },
+    { data: merchant, title: "Мерчант" },
+    { data: deliveryRate, title: "Хүргэлтийн хувь" },
+  ];
 
-  
-console.log(orders)
+  console.log(orders);
 
   return (
     <>
-      
       <div className={classes.screenHead}>
         <div className={classes.filters}>
           <VendorFilter />
@@ -153,8 +193,8 @@ console.log(orders)
         {datas.map((data, index) => {
           return (
             <div className={classes.barWrapper}>
-              <h1 className={classes.title}>Нийт дүн</h1>
-              <KPIBarChart key={`kpi-bar-chart-${index}`} data={data} />;
+              <h1 className={classes.title}>{data.title}</h1>
+              <KPIBarChart key={`kpi-bar-chart-${index}`} data={data.data} />
             </div>
           );
         })}
