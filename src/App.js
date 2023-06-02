@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { ManagementScreen } from "./screens/ManagementScreen";
 import { KPIScreen } from "./screens/KPIScreen";
+import { MauDauScreen } from "./screens/MauDauScreen";
 
 function App() {
   const tabs = ["Management", "KPI", "MAU/DAU", "Supplier", "PickPack"];
@@ -25,7 +26,8 @@ function App() {
       </div>
       <div className="content">
         {/* <ManagementScreen /> */}
-        <KPIScreen />
+        {/* <KPIScreen /> */}
+        <MauDauScreen />
       </div>
     </div>
   );
