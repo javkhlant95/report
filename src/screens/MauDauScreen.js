@@ -34,9 +34,9 @@ export const MauDauScreen = () => {
         display: false,
         data: barLabels.map(() => Math.round(Math.random() * 70)),
         backgroundColor: "#eded21",
-        datalabels: {
-          color: "#e3d",
-        },
+        // datalabels: {
+        //   color: "#e3d",
+        // },
       },
     ],
   };

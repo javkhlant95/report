@@ -14,7 +14,7 @@ function App() {
       title: "KPI",
       content: <KPIScreen />,
     },
-    { title: "MAU/DAU" },
+    { title: "MAU/DAU", content: <MauDauScreen /> },
     { title: "Supplier" },
     { title: "PickPack" },
   ];
