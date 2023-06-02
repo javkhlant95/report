@@ -4,9 +4,6 @@ import { KPIBarChart } from "../components/KPI/KPIBarChart";
 import { useEffect, useState } from "react";
 
 
-
-
-
 export const KPIScreen = () => {
   const [orders, setOrders] = useState([])
 

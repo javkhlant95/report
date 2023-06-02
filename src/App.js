@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { ManagementScreen } from "./screens/ManagementScreen";
 import { KPIScreen } from "./screens/KPIScreen";
+import { MauDauScreen } from "./screens/MauDauScreen";
 
 function App() {
   const tabs = [
