@@ -5,7 +5,19 @@ import { KPIScreen } from "./screens/KPIScreen";
 import { MauDauScreen } from "./screens/MauDauScreen";
 
 function App() {
-  const tabs = ["Management", "KPI", "MAU/DAU", "Supplier", "PickPack"];
+  const tabs = [
+    {
+      title: "Management",
+      content: <ManagementScreen />,
+    },
+    {
+      title: "KPI",
+      content: <KPIScreen />,
+    },
+    { title: "MAU/DAU" },
+    { title: "Supplier" },
+    { title: "PickPack" },
+  ];
 
   const [activeTab, setActiveTab] = useState("Management");
 
@@ -15,19 +27,19 @@ function App() {
         {tabs.map((tab, index) => {
           return (
             <button
-              onClick={() => setActiveTab(tab)}
-              className={`singleTab ${tab === activeTab ? "active" : null}`}
+              onClick={() => setActiveTab(tab.title)}
+              className={`singleTab ${
+                tab.title === activeTab ? "active" : null
+              }`}
               key={`tab-${index}`}
             >
-              {tab}
+              {tab.title}
             </button>
           );
         })}
       </div>
       <div className="content">
-        {/* <ManagementScreen /> */}
-        {/* <KPIScreen /> */}
-        <MauDauScreen />
+        {tabs.find((tab) => tab.title === activeTab).content}
       </div>
     </div>
   );

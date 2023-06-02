@@ -1,12 +1,14 @@
 import { useState } from "react";
-import classes from "./VendorFilter.module.css";
+import classes from "./TypeFilter.module.css";
 
-export const VendorFilter = ({ vendors }) => {
+export const TypeFilter = () => {
   const [showDropDown, setShowDropDown] = useState(false);
 
+  const types = [{ name: "GT" }, { name: "Horeca" }];
+
   return (
-    <div className={classes.vendorFilter}>
-      <span>Vendor</span>
+    <div className={classes.typeFilter}>
+      <span>Type</span>
       <div className={classes.dropDownWrapper}>
         <button
           onClick={() => {
@@ -23,11 +25,11 @@ export const VendorFilter = ({ vendors }) => {
             showDropDown ? classes.show : null
           }`}
         >
-          {vendors.map((vendor) => {
+          {types.map((type, index) => {
             return (
-              <div className={classes.singleVendorList} key={vendor.id}>
-                <input type="checkbox" id={vendor.name} />
-                <label htmlFor={vendor.name}>{vendor.name}</label>
+              <div className={classes.singleTypeList} key={index}>
+                <input type="checkbox" id={type.name} />
+                <label htmlFor={type.name}>{type.name}</label>
               </div>
             );
           })}

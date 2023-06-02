@@ -1,8 +1,8 @@
-.vendorFilter {
+.stateFilter {
   width: 30%;
 }
 
-.vendorFilter > span {
+.stateFilter > span {
   display: block;
   margin-bottom: 10px;
   font-weight: 600;
@@ -35,7 +35,7 @@
   top: 100%;
   left: 0;
   /* right: 0; */
-  width: 180%;
+  width: 120%;
   height: 200px;
   overflow-y: auto;
   background-color: white;
@@ -47,12 +47,12 @@
   display: block;
 }
 
-.singleVendorList {
+.singleStateList {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.singleVendorList label {
+.singleStateList label {
   font-size: 14px;
 }
