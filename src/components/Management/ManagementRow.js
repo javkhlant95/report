@@ -1,16 +1,22 @@
 import classes from "./ManagementRow.module.css";
 
-export const ManagementRow = () => {
+export const ManagementRow = ({ stat, label }) => {
   return (
     <div className={classes.row}>
-      <h1 className={classes.title}>Сарын гүйцэтгэл</h1>
+      <h1 className={classes.title}>Сарын гүйцэтгэл /{label}/</h1>
       <div className={classes.boxs}>
-        {Array.from(Array(7)).map((val) => {
+        {Object.keys(stat).map((key, index) => {
           return (
-            <div className={classes.singleBox}>
-              <p className={classes.boxTitle}>Захиалга</p>
-              <h3 className={classes.boxContent}>257</h3>
-              <span className={classes.boxGoal}>Goal: 1,400M</span>
+            <div key={`stat-box-${index}`} className={classes.singleBox}>
+              <p className={classes.boxTitle}>{stat[key].label}</p>
+              <h3 className={classes.boxContent}>
+                {stat[key].stat >= 1_000_000
+                  ? Math.round(stat[key].stat / 1_000_000) + "M"
+                  : stat[key].stat}
+              </h3>
+              {stat[key].goal && (
+                <span className={classes.boxGoal}>Goal: 1,400M</span>
+              )}
             </div>
           );
         })}
