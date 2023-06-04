@@ -1,0 +1,49 @@
+.row {
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.monthSingleBox {
+  background: white;
+  width: 16%;
+  height: 80px;
+  text-align: center;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.monthBoxTitle {
+  font-size: 16px;
+  color: #27b55b;
+  font-style: italic;
+}
+
+.monthBoxContent {
+  font-size: 28px;
+}
+
+.dailySingleBox {
+  background: white;
+  width: 16%;
+  height: 80px;
+  text-align: center;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.dailyBoxTitle {
+  font-size: 16px;
+  color: #4a83b6;
+  font-style: italic;
+}
+
+.dailyBoxContent {
+  font-size: 28px;
+}
