@@ -2,9 +2,13 @@ import classes from "./KPIScreen.module.css";
 import { VendorFilter } from "../components/KPI/VendorFilter";
 import { KPIBarChart } from "../components/KPI/KPIBarChart";
 import { useEffect, useState } from "react";
+import { FilterHeader } from "../components/Filters";
 
 export const KPIScreen = () => {
   const [orders, setOrders] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [states, setStates] = useState([]);
 
   const fetchOrders = async () => {
     try {
@@ -174,20 +178,9 @@ export const KPIScreen = () => {
     { data: deliveryRate, title: "Хүргэлтийн хувь" },
   ];
 
-  console.log(orders);
-
   return (
     <>
-      <div className={classes.screenHead}>
-        <div className={classes.filters}>
-          <VendorFilter />
-          <VendorFilter />
-          <VendorFilter />
-        </div>
-
-        {/* <StatusFilters />
-        <MonthFilter /> */}
-      </div>
+      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
 
       <div className={classes.kpiContent}>
         {datas.map((data, index) => {

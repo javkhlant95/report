@@ -1,75 +1,38 @@
-import { useEffect, useState } from "react";
-import { ManagementRow } from "../components/Management/ManagementRow";
-import { MonthFilter } from "../components/Management/MonthFilter";
-import { StatusFilters } from "../components/Management/StatusFilters";
-import { VendorFilter } from "../components/Management/VendorFilter";
 import classes from "./ManagementScreen.module.css";
-import { StateFilter } from "../components/Management/StateFilter";
-import { TypeFilter } from "../components/Management/TypeFilter";
+import { useContext, useEffect, useState } from "react";
+import { ManagementRow } from "../components/Management/ManagementRow";
+import { MonthContext } from "../contexts/MonthContext";
+import { FilterHeader } from "../components/Filters";
 
 const countUnique = (arr) => {
   return new Set(arr).size;
 };
 
-export const ManagementScreen = () => {
-  const [orders, setOrders] = useState([]);
+export const ManagementScreen = ({ orders }) => {
   const [vendors, setVendors] = useState([]);
   const [states, setStates] = useState([]);
   const [statuses, setStatuses] = useState([]);
 
   const [totalStat, setTotalStat] = useState({});
 
-  const fetchOrders = async () => {
-    try {
-      const res = await Promise.all([
-        fetch(`https://api2.ebazaar.mn/api/order/duplicate/get`, {
-          method: "POST",
-          body: JSON.stringify({
-            start_date: "2023-05-01",
-            end_date: "2023-05-31",
-            projection: {
-              order_id: 1,
-              supplier_id: 1,
-              customer_id: 1,
-              line: 1,
-              grand_total: 1,
-              status: 1,
-              business_type_id: 1,
-            },
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }),
-      ]);
-
-      const data = await res[0].json();
-
-      setOrders(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  const { currentMonth } = useContext(MonthContext);
 
   const calculate = () => {
-    if (orders.length > 0) {
+    const currentOrders = orders[currentMonth];
+
+    if (currentOrders.length > 0) {
       const gtIds = ["1", "2", "3", "4", "5"];
       const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
 
-      const gtOrders = orders.filter((order) =>
+      const gtOrders = currentOrders.filter((order) =>
         gtIds.includes(order.business_type_id)
       );
 
-      const horekaOrders = orders.filter((order) =>
+      const horekaOrders = currentOrders.filter((order) =>
         horekaIds.includes(order.business_type_id)
       );
 
-      const shuurkhaiOrders = orders.filter(
+      const shuurkhaiOrders = currentOrders.filter(
         (order) => order.supplier_id === 13884
       );
 
@@ -81,38 +44,48 @@ export const ManagementScreen = () => {
         });
       });
 
-      const otherOrders = orders.filter((order) => order.supplier_id !== 13884);
+      const otherOrders = currentOrders.filter(
+        (order) => order.supplier_id !== 13884
+      );
 
       const newTotalStat = {
         all: {
           label: "Нийт",
           labelColor: "#2EAE70",
           data: {
-            total: { stat: orders.length, label: "Захиалга" },
+            total: { stat: currentOrders.length, label: "Захиалга" },
             totalAmount: {
-              stat: orders.reduce((acc, cur) => acc + cur.grand_total, 0),
+              stat: currentOrders.reduce(
+                (acc, cur) => acc + cur.grand_total,
+                0
+              ),
               label: "Нийт дүн",
             },
             delivered: {
               label: "Хүргэсэн",
-              stat: orders
+              stat: currentOrders
                 .filter((order) => order.status === 3)
                 .reduce((acc, cur) => acc + cur.grand_total, 0),
             },
             customers: {
               label: "Идэвхитэй харилцагч",
-              stat: countUnique(orders.map((order) => order.customer_id)),
+              stat: countUnique(
+                currentOrders.map((order) => order.customer_id)
+              ),
             },
             suppliers: {
               label: "Нийлүүлэгч",
-              stat: countUnique(orders.map((order) => order.supplier_id)),
+              stat: countUnique(
+                currentOrders.map((order) => order.supplier_id)
+              ),
             },
             deliveryRate: {
               label: "Хүргэлтийн хувь",
               stat:
                 Math.round(
-                  (orders.filter((order) => order.status === 3).length * 100) /
-                    orders.length
+                  (currentOrders.filter((order) => order.status === 3).length *
+                    100) /
+                    currentOrders.length
                 ) + "%",
             },
           },
@@ -279,20 +252,11 @@ export const ManagementScreen = () => {
 
   useEffect(() => {
     calculate();
-  }, [orders]);
+  }, [currentMonth, orders[currentMonth]]);
 
   return (
     <div className={classes.screenWrapper}>
-      <div className={classes.screenHead}>
-        <div className={classes.filters}>
-          <VendorFilter vendors={vendors} />
-          <TypeFilter />
-          <StateFilter states={states} />
-        </div>
-
-        <StatusFilters statuses={statuses} />
-        <MonthFilter />
-      </div>
+      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
 
       <div className={classes.managementContent}>
         {Object.keys(totalStat).map((key, index) => {

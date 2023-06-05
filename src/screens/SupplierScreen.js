@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { MonthFilter } from "../components/Management/MonthFilter";
-import { StateFilter } from "../components/Management/StateFilter";
-import { StatusFilters } from "../components/Management/StatusFilters";
-import { TypeFilter } from "../components/Management/TypeFilter";
-import { VendorFilter } from "../components/Management/VendorFilter";
 import classes from "./SupplierScreen.module.css";
 import { SupplierTable } from "../components/Supplier/SupplierTable";
+import { TypeChart } from "../components/Supplier/TypeChart";
+import { FilterHeader } from "../components/Filters";
+import { MerchantTable } from "../components/Supplier/MerchantTable";
 
 export const SupplierScreen = () => {
   const [vendors, setVendors] = useState([]);
@@ -14,16 +12,7 @@ export const SupplierScreen = () => {
 
   return (
     <div className={classes.screenWrapper}>
-      <div className={classes.screenHead}>
-        <div className={classes.filters}>
-          <VendorFilter vendors={vendors} />
-          <TypeFilter />
-          <StateFilter states={states} />
-        </div>
-
-        <StatusFilters statuses={statuses} />
-        <MonthFilter />
-      </div>
+      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
 
       <div className={classes.suppliersContent}>
         <div className={classes.stats}>
@@ -41,7 +30,10 @@ export const SupplierScreen = () => {
         <div className={classes.contentWrapper}>
           <SupplierTable />
 
-          <div className={classes.leftContentWrapper}></div>
+          <div className={classes.leftContentWrapper}>
+            <TypeChart />
+            <MerchantTable />
+          </div>
         </div>
       </div>
     </div>

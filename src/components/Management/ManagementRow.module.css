@@ -1,6 +1,7 @@
 .row {
   width: 100%;
-  height: calc((100% - 40px) / 5);
+  flex: 1;
+  /* border: 1px solid black; */
 }
 
 .title {

@@ -1,14 +1,21 @@
 .tableWrapper {
-  width: 65%;
-  height: 100%;
   background-color: white;
   border-radius: 10px;
+  width: 100%;
+  height: 55%;
   padding: 10px;
+  overflow-x: auto;
+}
+
+.table {
+  height: 100%;
+  width: 140%;
   display: flex;
   flex-direction: column;
 }
 
 .tableHead {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,6 +28,7 @@
   padding: 10px;
   align-self: stretch;
   flex: 1;
+  text-align: center;
 }
 
 .tableHead button:hover {
@@ -28,6 +36,7 @@
 }
 
 .tableBody {
+  width: 100%;
   flex: 1;
   overflow-y: auto;
 }
@@ -46,8 +55,8 @@
 .tableRow span {
   flex: 1;
   align-self: stretch;
-  text-align: center;
-  font-size: 15px;
+  text-align: start;
+  font-size: 14px;
   color: rgba(0, 0, 0, 0.87);
   padding: 5px 0;
   display: flex;
@@ -60,11 +69,11 @@
 }
 
 .tableFooter {
+  border-top: 1px solid #414fb1;
+  padding-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid #414fb1;
 }
 
 .tableFooter span {
@@ -72,4 +81,5 @@
   text-align: center;
   font-size: 14px;
   font-weight: 600;
+  padding: 0 10px;
 }
