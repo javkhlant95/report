@@ -25,27 +25,37 @@ ChartJS.register(
 export const PickPackDoughnutChart = ({ data }) => {
   const options = {
     maintainAspectRatio: false,
+
     plugins: {
       legend: {
+        maxWidth: 120,
         position: "right",
-        align: "start",
+        align: "end",
         labels: {
           usePointStyle: true,
         },
-        padding: {},
-      },
-      title: {
-        display: true,
-        text: "Нийлүүлэгч",
-        align: "center",
-        padding: {
-          bottom: 20,
-        },
-        color: "#57758F",
-        font: {
-          size: 20,
+        title: {
+          display: true,
+          text: "Нийлүүлэгч",
+          align: "start",
+          color: "#57758F",
+          font: {
+            size: 20,
+          },
         },
       },
+      // title: {
+      //   display: true,
+      //   text: "Нийлүүлэгч",
+      //   align: "center",
+      //   padding: {
+      //     bottom: 20,
+      //   },
+      //   color: "#57758F",
+      //   font: {
+      //     size: 20,
+      //   },
+      // },
 
       outlabels: {
         text: "%l %p",

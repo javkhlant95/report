@@ -1,8 +1,7 @@
 .bar {
   background-color: #fff;
-  width: 500px;
-  height: 200px;
+  width: 490px;
+  height: 100%;
   display: flex;
   justify-content: center;
-  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.1);
 }

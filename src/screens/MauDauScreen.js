@@ -1,11 +1,14 @@
-import { VendorFilter } from "../components/MauDau/VendorFilter";
 import classes from "./MauDauScreen.module.css";
 import { useState } from "react";
 import { MauDauBarChart } from "../components/MauDau/MauDauBarChart";
 import { MauDauLineChart } from "../components/MauDau/MauDauLineChart";
 import { MauDauRow } from "../components/MauDau/MauDauRow";
+import { FilterHeader } from "../components/Filters";
 
 export const MauDauScreen = () => {
+  const [vendors, setVendors] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [states, setStates] = useState([]);
   const [barLabels, setBarLabels] = useState([
     "January",
     "February",
@@ -145,16 +148,7 @@ export const MauDauScreen = () => {
 
   return (
     <>
-      <div className={classes.screenHead}>
-        <div className={classes.filters}>
-          <VendorFilter />
-          <VendorFilter />
-          <VendorFilter />
-        </div>
-
-        {/* <StatusFilters />
-        <MonthFilter /> */}
-      </div>
+      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
 
       <div className={classes.mauDauContent}>
         <div className={classes.chartContent}>
