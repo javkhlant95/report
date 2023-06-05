@@ -1,0 +1,16 @@
+.filterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 12vh;
+}
+
+.dropdownFilters {
+  background-color: white;
+  width: 40%;
+  height: 100%;
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}

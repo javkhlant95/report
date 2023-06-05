@@ -3,10 +3,25 @@ import classes from "./MonthFilter.module.css";
 import { MonthContext } from "../../contexts/MonthContext";
 
 export const MonthFilter = () => {
-  const { months, currentMonth, setCurrentMonth } = useContext(MonthContext);
+  const months = [
+    { label: "January", value: 1 },
+    { label: "February", value: 2 },
+    { label: "March", value: 3 },
+    { label: "April", value: 4 },
+    { label: "May", value: 5 },
+    { label: "June", value: 6 },
+    { label: "July", value: 7 },
+    { label: "August", value: 8 },
+    { label: "September", value: 9 },
+    { label: "October", value: 10 },
+    { label: "November", value: 11 },
+    { label: "December", value: 12 },
+  ];
+
+  const { currentMonth, setCurrentMonth } = useContext(MonthContext);
 
   const [currentMonthIndex, setCurrentMonthIndex] = useState(
-    new Date().getMonth() - 2
+    new Date().getMonth() - 1
   );
 
   return (
@@ -24,13 +39,13 @@ export const MonthFilter = () => {
         .map((month, index) => {
           return (
             <button
-              onClick={() => setCurrentMonth(month)}
+              onClick={() => setCurrentMonth(month.value)}
               key={`month-filter-${index}`}
               className={`${classes.singleMonth} ${
-                month === currentMonth && classes.active
+                month.value === currentMonth && classes.active
               }`}
             >
-              {month}
+              {month.label}
             </button>
           );
         })}
