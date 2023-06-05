@@ -48,11 +48,7 @@ export const MauDauLineChart = ({ data, title }) => {
 
   return (
     <div className={classes.line}>
-      <Line
-        options={options}
-        data={data}
-        style={{ width: 1000, height: 190 }}
-      />
+      <Line options={options} data={data} />
     </div>
   );
 };

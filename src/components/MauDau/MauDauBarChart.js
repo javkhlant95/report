@@ -45,7 +45,7 @@ export const MauDauBarChart = ({ data, title }) => {
 
   return (
     <div className={classes.bar}>
-      <Bar options={options} data={data} style={{ width: 645, height: 190 }} />
+      <Bar options={options} data={data} />
     </div>
   );
 };
