@@ -1,168 +1,193 @@
 import classes from "./KPIScreen.module.css";
 import { KPIBarChart } from "../components/KPI/KPIBarChart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FilterHeader } from "../components/Filters";
+import { countUnique } from "../utils/countUnique";
 
-export const KPIScreen = () => {
-  const [orders, setOrders] = useState([]);
+const labels = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+export const KPIScreen = ({ orders }) => {
+  const [currentMonth, setCurrentMonth] = useState(13);
+
   const [vendors, setVendors] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
 
-  const [labels, setLabels] = useState([
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ]);
+  const [stats, setStats] = useState({});
 
-  // const NUMBER_BN = { min: 0, max: 6 };
+  useEffect(() => {
+    if (currentMonth === 13) {
+      const totalAmountRes = [];
+      const deliveredAmountRes = [];
+      const merchantRes = [];
+      const deliveryRateRes = [];
 
-  const totalAmount = {
-    labels,
-    datasets: [
-      {
-        label: "2022",
-        data: labels.map(() => Math.round(Math.random() * 70)),
-        backgroundColor: "#93eb34",
-        borderWidth: 1,
-        pointStyle: "rectRot",
-        pointRadius: 5,
-      },
-      {
-        label: "2023",
-        data:
-          orders.length > 0
-            ? [
-                0,
-                0,
-                0,
-                0,
-                orders.reduce((acc, cur) => acc + cur.grand_total, 0),
-              ]
-            : [],
-        backgroundColor: "#3461eb",
-      },
-      {
-        label: "Төлөвлөгөө",
-        data: labels.map(() => Math.round(Math.random() * 70)),
-        backgroundColor: "#ebc934",
-      },
-    ],
-  };
+      Object.keys(orders).map((key) => {
+        totalAmountRes.push(orders[key].reduce((acc, cur) => acc + cur.grand_total, 0));
+        deliveredAmountRes.push(
+          orders[key]
+            .filter((order) => order.status === 3)
+            .reduce((acc, cur) => acc + cur.grand_total, 0)
+        );
+        merchantRes.push(countUnique(orders[key].map((order) => order.customer_id)));
+        deliveryRateRes.push(
+          (orders[key].filter((order) => order.status === 3).length * 100) / orders[key].length
+        );
+      });
 
-  const deliveredAmount = {
-    labels,
-    datasets: [
-      {
-        label: "2022",
-        data: labels.map(() => Math.round(Math.random() * 70)),
-        backgroundColor: "#93eb34",
-      },
-      {
-        label: "2023",
-        data:
-          orders.length > 0
-            ? [
-                0,
-                0,
-                0,
-                0,
-                orders
-                  .filter((order) => order.status === 3)
-                  .reduce((acc, cur) => acc + cur.grand_total, 0),
-              ]
-            : [],
-        backgroundColor: "#3461eb",
-      },
-      {
-        label: "Төлөвлөгөө",
-        data: labels.map(() => Math.round(Math.random() * 50)),
-        backgroundColor: "#eb6234",
-      },
-    ],
-  };
+      const newStat = {
+        totalAmount: {
+          title: "Нийт дүн",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "2023",
+                data: totalAmountRes,
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        deliveredAmount: {
+          title: "Хүргэсэн дүн",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "2023",
+                data: deliveredAmountRes,
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        merchant: {
+          title: "Мерчант",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "2023",
+                data: merchantRes,
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        deliveryRate: {
+          title: "Хүргэлтийн хувь",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "2023",
+                data: deliveryRateRes,
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+      };
 
-  const merchant = {
-    labels,
-    datasets: [
-      {
-        label: "2022",
-        data: labels.map(() => Math.round(Math.random() * 70)),
-        backgroundColor: "#93eb34",
-      },
-      {
-        label: "2023",
-        data: labels.map(() => Math.round(Math.random() * 60)),
-        backgroundColor: "#3461eb",
-      },
-      {
-        label: "Төлөвлөгөө",
-        data: labels.map(() => Math.round(Math.random() * 50)),
-        backgroundColor: "#eb34a8",
-      },
-    ],
-  };
+      setStats(newStat);
+    } else if (currentMonth < 13) {
+      const newStat = {
+        totalAmount: {
+          title: "Нийт дүн",
+          data: {
+            labels: [labels[currentMonth - 1]],
+            datasets: [
+              {
+                label: "2023",
+                data: [orders[currentMonth].reduce((acc, cur) => acc + cur.grand_total, 0)],
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        deliveredAmount: {
+          title: "Хүргэсэн дүн",
+          data: {
+            labels: [labels[currentMonth - 1]],
+            datasets: [
+              {
+                label: "2023",
+                data: [
+                  orders[currentMonth]
+                    .filter((order) => order.status === 3)
+                    .reduce((acc, cur) => acc + cur.grand_total, 0),
+                ],
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        merchant: {
+          title: "Мерчант",
+          data: {
+            labels: [labels[currentMonth - 1]],
+            datasets: [
+              {
+                label: "2023",
+                data: [countUnique(orders[currentMonth].map((order) => order.customer_id))],
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+        deliveryRate: {
+          title: "Хүргэлтийн хувь",
+          data: {
+            labels: [labels[currentMonth - 1]],
+            datasets: [
+              {
+                label: "2023",
+                data: [
+                  (orders[currentMonth].filter((order) => order.status === 3).length * 100) /
+                    orders[currentMonth].length,
+                ],
+                backgroundColor: "#3461eb",
+              },
+            ],
+          },
+        },
+      };
 
-  const deliveryRate = {
-    labels,
-    datasets: [
-      {
-        label: "2022",
-        data: labels.map(() => Math.round(Math.random() * 70)),
-        backgroundColor: "#93eb34",
-      },
-      {
-        label: "2023",
-        data:
-          orders.length > 0
-            ? [
-                0,
-                0,
-                0,
-                0,
-                Math.round(
-                  (orders.filter((order) => order.status === 3).length * 100) /
-                    orders.length
-                ),
-              ]
-            : [],
-        backgroundColor: "#3461eb",
-      },
-      {
-        label: "Хувь",
-        data: labels.map(() => Math.round(Math.random() * 50)),
-        backgroundColor: "#9934eb",
-      },
-    ],
-  };
-
-  // const datas = [totalAmount, deliveredAmount, merchant, deliveryRate];
-  const datas = [
-    { data: totalAmount, title: "Нийт дүн" },
-    { data: deliveredAmount, title: "Хүргэсэн дүн" },
-    { data: merchant, title: "Мерчант" },
-    { data: deliveryRate, title: "Хүргэлтийн хувь" },
-  ];
+      setStats(newStat);
+    }
+  }, [currentMonth, orders]);
 
   return (
     <>
-      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
+      <FilterHeader
+        vendors={vendors}
+        states={states}
+        statuses={statuses}
+        currentMonth={currentMonth}
+        setCurrentMonth={setCurrentMonth}
+        removeMonth
+      />
 
       <div className={classes.kpiContent}>
-        {datas.map((data, index) => {
+        {Object.keys(stats).map((key, index) => {
           return (
             <div className={classes.barWrapper}>
-              <h1 className={classes.title}>{data.title}</h1>
-              <KPIBarChart key={`kpi-bar-chart-${index}`} data={data.data} />
+              <h1 className={classes.title}>{stats[key].title}</h1>
+              <KPIBarChart key={`kpi-bar-chart-${index}`} data={stats[key].data} />
             </div>
           );
         })}

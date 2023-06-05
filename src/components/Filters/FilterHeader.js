@@ -1,11 +1,5 @@
 import classes from "./FilterHeader.module.css";
-import {
-  MonthFilter,
-  VendorFilter,
-  TypeFilter,
-  StateFilter,
-  StatusFilters,
-} from "./";
+import { MonthFilter, VendorFilter, TypeFilter, StateFilter, StatusFilters } from "./";
 
 export const FilterHeader = ({
   vendors,
@@ -13,6 +7,7 @@ export const FilterHeader = ({
   statuses,
   currentMonth,
   setCurrentMonth,
+  removeMonth = false,
 }) => {
   return (
     <div className={classes.filterHeader}>
@@ -26,6 +21,7 @@ export const FilterHeader = ({
       <MonthFilter
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
+        removeMonth={removeMonth}
       />
     </div>
   );
