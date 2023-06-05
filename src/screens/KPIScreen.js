@@ -36,15 +36,20 @@ export const KPIScreen = ({ orders }) => {
       const deliveryRateRes = [];
 
       Object.keys(orders).map((key) => {
-        totalAmountRes.push(orders[key].reduce((acc, cur) => acc + cur.grand_total, 0));
+        totalAmountRes.push(
+          orders[key].reduce((acc, cur) => acc + cur.grand_total, 0)
+        );
         deliveredAmountRes.push(
           orders[key]
             .filter((order) => order.status === 3)
             .reduce((acc, cur) => acc + cur.grand_total, 0)
         );
-        merchantRes.push(countUnique(orders[key].map((order) => order.customer_id)));
+        merchantRes.push(
+          countUnique(orders[key].map((order) => order.customer_id))
+        );
         deliveryRateRes.push(
-          (orders[key].filter((order) => order.status === 3).length * 100) / orders[key].length
+          (orders[key].filter((order) => order.status === 3).length * 100) /
+            orders[key].length
         );
       });
 
@@ -58,6 +63,7 @@ export const KPIScreen = ({ orders }) => {
                 label: "2023",
                 data: totalAmountRes,
                 backgroundColor: "#3461eb",
+                barPercentage: 1,
               },
             ],
           },
@@ -71,6 +77,7 @@ export const KPIScreen = ({ orders }) => {
                 label: "2023",
                 data: deliveredAmountRes,
                 backgroundColor: "#3461eb",
+                barPercentage: 1,
               },
             ],
           },
@@ -84,6 +91,7 @@ export const KPIScreen = ({ orders }) => {
                 label: "2023",
                 data: merchantRes,
                 backgroundColor: "#3461eb",
+                barPercentage: 1,
               },
             ],
           },
@@ -97,6 +105,7 @@ export const KPIScreen = ({ orders }) => {
                 label: "2023",
                 data: deliveryRateRes,
                 backgroundColor: "#3461eb",
+                barPercentage: 1,
               },
             ],
           },
@@ -113,8 +122,14 @@ export const KPIScreen = ({ orders }) => {
             datasets: [
               {
                 label: "2023",
-                data: [orders[currentMonth].reduce((acc, cur) => acc + cur.grand_total, 0)],
+                data: [
+                  orders[currentMonth].reduce(
+                    (acc, cur) => acc + cur.grand_total,
+                    0
+                  ),
+                ],
                 backgroundColor: "#3461eb",
+                barPercentage: 0.1,
               },
             ],
           },
@@ -132,6 +147,7 @@ export const KPIScreen = ({ orders }) => {
                     .reduce((acc, cur) => acc + cur.grand_total, 0),
                 ],
                 backgroundColor: "#3461eb",
+                barPercentage: 0.1,
               },
             ],
           },
@@ -143,8 +159,13 @@ export const KPIScreen = ({ orders }) => {
             datasets: [
               {
                 label: "2023",
-                data: [countUnique(orders[currentMonth].map((order) => order.customer_id))],
+                data: [
+                  countUnique(
+                    orders[currentMonth].map((order) => order.customer_id)
+                  ),
+                ],
                 backgroundColor: "#3461eb",
+                barPercentage: 0.1,
               },
             ],
           },
@@ -157,10 +178,13 @@ export const KPIScreen = ({ orders }) => {
               {
                 label: "2023",
                 data: [
-                  (orders[currentMonth].filter((order) => order.status === 3).length * 100) /
+                  (orders[currentMonth].filter((order) => order.status === 3)
+                    .length *
+                    100) /
                     orders[currentMonth].length,
                 ],
                 backgroundColor: "#3461eb",
+                barPercentage: 0.1,
               },
             ],
           },
@@ -187,7 +211,10 @@ export const KPIScreen = ({ orders }) => {
           return (
             <div className={classes.barWrapper}>
               <h1 className={classes.title}>{stats[key].title}</h1>
-              <KPIBarChart key={`kpi-bar-chart-${index}`} data={stats[key].data} />
+              <KPIBarChart
+                key={`kpi-bar-chart-${index}`}
+                data={stats[key].data}
+              />
             </div>
           );
         })}
