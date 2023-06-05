@@ -5,6 +5,7 @@ import {
   KPIScreen,
   SupplierScreen,
   MauDauScreen,
+  PickPackScreen,
 } from "./screens";
 import { MonthProvider } from "./contexts/MonthContext";
 
@@ -78,7 +79,7 @@ export const Report = () => {
     },
     { title: "MAU/DAU", content: <MauDauScreen /> },
     { title: "Supplier", content: <SupplierScreen /> },
-    { title: "PickPack" },
+    { title: "PickPack", content: <PickPackScreen /> },
   ];
   const [activeTab, setActiveTab] = useState("Management");
 
