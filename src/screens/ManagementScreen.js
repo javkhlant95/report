@@ -21,75 +21,32 @@ export const ManagementScreen = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(
-        `https://api2.ebazaar.mn/api/orders?order_start=2023-05-01&order_end=2023-05-02&page=all`,
-        {
-          method: "GET",
+      const res = await Promise.all([
+        fetch(`https://api2.ebazaar.mn/api/order/duplicate/get`, {
+          method: "POST",
+          body: JSON.stringify({
+            start_date: "2023-05-01",
+            end_date: "2023-05-31",
+            projection: {
+              order_id: 1,
+              supplier_id: 1,
+              customer_id: 1,
+              line: 1,
+              grand_total: 1,
+              status: 1,
+              business_type_id: 1,
+            },
+          }),
           headers: {
+            "Content-Type": "application/json",
             ebazaar_token: localStorage.getItem("ebazaar_token"),
           },
-        }
-      );
+        }),
+      ]);
 
-      const data = await res.json();
+      const data = await res[0].json();
 
-      setOrders(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchVendors = async () => {
-    try {
-      const res = await fetch(
-        "https://api2.ebazaar.mn/api/backoffice/suppliers",
-        {
-          method: "GET",
-          headers: {
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }
-      );
-
-      const data = await res.json();
-      setVendors(
-        data.data.sort((a, b) => {
-          if (a.name < b.name) return -1;
-          if (a.name > b.name) return 1;
-          return 0;
-        })
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchStates = async () => {
-    try {
-      const res = await fetch("https://api.ebazaar.mn/api/site_data");
-      const data = await res.json();
-
-      setStates(data.location.filter((loc) => loc.parent_id === 0));
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchStatuses = async () => {
-    try {
-      const res = await fetch("https://api2.ebazaar.mn/api/order/status/list", {
-        method: "GET",
-        headers: {
-          ebazaar_token: localStorage.getItem("ebazaar_token"),
-        },
-      });
-
-      const data = await res.json();
-      setStatuses(
-        data.data.filter((status) =>
-          [1, 2, 3, 5].includes(status.OrderStatusID)
-        )
-      );
+      setOrders(data);
     } catch (error) {
       console.log(error);
     }
@@ -97,12 +54,9 @@ export const ManagementScreen = () => {
 
   useEffect(() => {
     fetchOrders();
-    fetchVendors();
-    fetchStates();
-    fetchStatuses();
   }, []);
 
-  useEffect(() => {
+  const calculate = () => {
     if (orders.length > 0) {
       const gtIds = ["1", "2", "3", "4", "5"];
       const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
@@ -119,11 +73,20 @@ export const ManagementScreen = () => {
         (order) => order.supplier_id === 13884
       );
 
+      const shuurkhaiOrderVendors = [];
+
+      shuurkhaiOrders.map((order) => {
+        order.line.map((product) => {
+          product.vendor && shuurkhaiOrderVendors.push(product.vendor);
+        });
+      });
+
       const otherOrders = orders.filter((order) => order.supplier_id !== 13884);
 
       const newTotalStat = {
         all: {
           label: "Нийт",
+          labelColor: "#2EAE70",
           data: {
             total: { stat: orders.length, label: "Захиалга" },
             totalAmount: {
@@ -156,6 +119,7 @@ export const ManagementScreen = () => {
         },
         gt: {
           label: "GT",
+          labelColor: "#414FB1",
           data: {
             total: {
               label: "Захиалга",
@@ -192,6 +156,7 @@ export const ManagementScreen = () => {
         },
         horeka: {
           label: "Хореке",
+          labelColor: "#9071CE",
           data: {
             total: {
               label: "Захиалга",
@@ -228,6 +193,7 @@ export const ManagementScreen = () => {
         },
         shuurkhai: {
           label: "Шуурхай түгээлт",
+          labelColor: "#41A4FF",
           data: {
             total: {
               label: "Захиалга",
@@ -254,9 +220,7 @@ export const ManagementScreen = () => {
             },
             suppliers: {
               label: "Нийлүүлэгч",
-              stat: countUnique(
-                shuurkhaiOrders.map((order) => order.supplier_id)
-              ),
+              stat: countUnique(shuurkhaiOrderVendors),
             },
             deliveryRate: {
               label: "Хүргэлтийн хувь",
@@ -272,6 +236,7 @@ export const ManagementScreen = () => {
         },
         others: {
           label: "Шуурхай түгээлтээс бусад",
+          labelColor: "#20ADC9",
           data: {
             total: {
               label: "Захиалга",
@@ -310,10 +275,14 @@ export const ManagementScreen = () => {
 
       setTotalStat(newTotalStat);
     }
+  };
+
+  useEffect(() => {
+    calculate();
   }, [orders]);
 
   return (
-    <>
+    <div className={classes.screenWrapper}>
       <div className={classes.screenHead}>
         <div className={classes.filters}>
           <VendorFilter vendors={vendors} />
@@ -332,10 +301,11 @@ export const ManagementScreen = () => {
               key={`management-row-${index}`}
               stat={totalStat[key].data}
               label={totalStat[key].label}
+              labelColor={totalStat[key].labelColor}
             />
           );
         })}
       </div>
-    </>
+    </div>
   );
 };

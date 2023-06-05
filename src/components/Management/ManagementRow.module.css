@@ -1,11 +1,12 @@
-.title {
-  font-style: italic;
-  font-size: 32px;
-  margin-bottom: 20px;
+.row {
+  width: 100%;
+  height: calc((100% - 40px) / 5);
 }
 
-.row {
-  margin-bottom: 20px;
+.title {
+  font-style: italic;
+  font-size: 26px;
+  margin-bottom: 10px;
 }
 
 .boxs {
@@ -16,25 +17,27 @@
 }
 
 .singleBox {
-  background: white;
-  width: 13%;
-  height: 80px;
+  width: calc((100% - 120px) / 7);
+  background-color: white;
   text-align: center;
-  border-radius: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-self: stretch;
+  border-radius: 10px;
 }
 
-.boxTitle {
-  font-size: 18px;
+.singleBox h2 {
+  color: #577590;
+  font-size: 14px;
+  margin-bottom: 6px;
 }
 
-.boxContent {
+.singleBox h1 {
+  color: #252423;
   font-size: 32px;
+  font-weight: 400;
 }
 
-.boxGoal {
+.singleBox p {
+  color: #252423;
   font-size: 12px;
-  margin-bottom: 5px;
+  margin-top: -4px;
 }
