@@ -2,10 +2,7 @@ import classes from "./ManagementScreen.module.css";
 import { useEffect, useState } from "react";
 import { ManagementRow } from "../components/Management/ManagementRow";
 import { FilterHeader } from "../components/Filters";
-
-const countUnique = (arr) => {
-  return new Set(arr).size;
-};
+import { countUnique } from "../utils/countUnique";
 
 export const ManagementScreen = ({ orders, vendors }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
@@ -21,17 +18,13 @@ export const ManagementScreen = ({ orders, vendors }) => {
     const gtIds = ["1", "2", "3", "4", "5"];
     const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
 
-    const gtOrders = currentOrders.filter((order) =>
-      gtIds.includes(order.business_type_id)
-    );
+    const gtOrders = currentOrders.filter((order) => gtIds.includes(order.business_type_id));
 
     const horekaOrders = currentOrders.filter((order) =>
       horekaIds.includes(order.business_type_id)
     );
 
-    const shuurkhaiOrders = currentOrders.filter(
-      (order) => order.supplier_id === 13884
-    );
+    const shuurkhaiOrders = currentOrders.filter((order) => order.supplier_id === 13884);
 
     const shuurkhaiOrderVendors = [];
 
@@ -41,9 +34,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
       });
     });
 
-    const otherOrders = currentOrders.filter(
-      (order) => order.supplier_id !== 13884
-    );
+    const otherOrders = currentOrders.filter((order) => order.supplier_id !== 13884);
 
     const newTotalStat = {
       all: {
@@ -73,8 +64,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
             label: "Хүргэлтийн хувь",
             stat:
               (Math.round(
-                (currentOrders.filter((order) => order.status === 3).length *
-                  100) /
+                (currentOrders.filter((order) => order.status === 3).length * 100) /
                   currentOrders.length
               ) || 0) + "%",
           },
@@ -110,8 +100,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
             label: "Хүргэлтийн хувь",
             stat:
               (Math.round(
-                (gtOrders.filter((order) => order.status === 3).length * 100) /
-                  gtOrders.length
+                (gtOrders.filter((order) => order.status === 3).length * 100) / gtOrders.length
               ) || 0) + "%",
           },
         },
@@ -146,8 +135,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
             label: "Хүргэлтийн хувь",
             stat:
               (Math.round(
-                (horekaOrders.filter((order) => order.status === 3).length *
-                  100) /
+                (horekaOrders.filter((order) => order.status === 3).length * 100) /
                   horekaOrders.length
               ) || 0) + "%",
           },
@@ -163,10 +151,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
           },
           totalAmount: {
             label: "Нийт дүн",
-            stat: shuurkhaiOrders.reduce(
-              (acc, cur) => acc + cur.grand_total,
-              0
-            ),
+            stat: shuurkhaiOrders.reduce((acc, cur) => acc + cur.grand_total, 0),
           },
           delivered: {
             label: "Хүргэсэн",
@@ -176,9 +161,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
           },
           customers: {
             label: "Идэвхитэй харилцагч",
-            stat: countUnique(
-              shuurkhaiOrders.map((order) => order.customer_id)
-            ),
+            stat: countUnique(shuurkhaiOrders.map((order) => order.customer_id)),
           },
           suppliers: {
             label: "Нийлүүлэгч",
@@ -188,8 +171,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
             label: "Хүргэлтийн хувь",
             stat:
               (Math.round(
-                (shuurkhaiOrders.filter((order) => order.status === 3).length *
-                  100) /
+                (shuurkhaiOrders.filter((order) => order.status === 3).length * 100) /
                   shuurkhaiOrders.length
               ) || 0) + "%",
           },
@@ -225,8 +207,7 @@ export const ManagementScreen = ({ orders, vendors }) => {
             label: "Хүргэлтийн хувь",
             stat:
               (Math.round(
-                (otherOrders.filter((order) => order.status === 3).length *
-                  100) /
+                (otherOrders.filter((order) => order.status === 3).length * 100) /
                   otherOrders.length
               ) || 0) + "%",
           },
