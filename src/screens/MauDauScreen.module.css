@@ -11,20 +11,21 @@
 .chartContent {
   display: flex;
   height: 76vh;
+  gap: 15px;
 }
 
 .barContent {
   width: 40%;
-  height: calc((100% - 20px) / 3);
+  height: calc(76vh - 30px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
 .lineContent {
   width: 60%;
-  height: calc((100% - 20px) / 3);
+  height: calc(76vh - 30px);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
