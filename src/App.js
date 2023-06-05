@@ -3,6 +3,7 @@ import "./App.css";
 import { ManagementScreen } from "./screens/ManagementScreen";
 import { KPIScreen } from "./screens/KPIScreen";
 import { MauDauScreen } from "./screens/MauDauScreen";
+import { PickPackScreen } from "./screens/PickPackScreen";
 
 function App() {
   const tabs = [
@@ -16,7 +17,7 @@ function App() {
     },
     { title: "MAU/DAU", content: <MauDauScreen /> },
     { title: "Supplier" },
-    { title: "PickPack" },
+    { title: "PickPack", content: <PickPackScreen /> },
   ];
 
   const [activeTab, setActiveTab] = useState("Management");

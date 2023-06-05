@@ -1,0 +1,83 @@
+.container {
+  width: 50%;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+.tableWrapper {
+  width: 150%;
+  height: 100%;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.tableHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #fea61d;
+}
+
+.tableHead button {
+  color: #fea61d;
+  font-size: 15px;
+  padding: 10px;
+  align-self: stretch;
+  flex: 1;
+}
+
+.tableHead button:hover {
+  background-color: #e5e5e5;
+}
+
+.tableBody {
+  flex: 1;
+  overflow-y: scroll;
+}
+
+.tableRow {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+  cursor: pointer;
+}
+.tableRow .label {
+  align-self: start;
+}
+
+.tableRow:hover {
+  background-color: rgba(175, 170, 170, 0.5);
+}
+
+.tableRow span {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.87);
+  padding: 5px 0;
+  width: fit-content;
+}
+
+.tableFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #fea61d;
+  width: 100%;
+}
+
+.tableFooter .total {
+  text-align: start;
+  margin-right: 10px;
+}
+
+.tableFooter span {
+  flex: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+}
