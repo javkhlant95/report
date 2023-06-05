@@ -7,7 +7,13 @@ import {
   StatusFilters,
 } from "./";
 
-export const FilterHeader = ({ vendors, states, statuses }) => {
+export const FilterHeader = ({
+  vendors,
+  states,
+  statuses,
+  currentMonth,
+  setCurrentMonth,
+}) => {
   return (
     <div className={classes.filterHeader}>
       <div className={classes.dropdownFilters}>
@@ -17,7 +23,10 @@ export const FilterHeader = ({ vendors, states, statuses }) => {
       </div>
 
       <StatusFilters statuses={statuses} />
-      <MonthFilter />
+      <MonthFilter
+        currentMonth={currentMonth}
+        setCurrentMonth={setCurrentMonth}
+      />
     </div>
   );
 };

@@ -7,7 +7,6 @@ import {
   MauDauScreen,
   PickPackScreen,
 } from "./screens";
-import { MonthProvider } from "./contexts/MonthContext";
 
 export const Report = () => {
   const [orders, setOrders] = useState({
@@ -84,27 +83,25 @@ export const Report = () => {
   const [activeTab, setActiveTab] = useState("Management");
 
   return (
-    <MonthProvider>
-      <div className={classes.report}>
-        <div className={classes.tabs}>
-          {tabs.map((tab, index) => {
-            return (
-              <button
-                onClick={() => setActiveTab(tab.title)}
-                className={`${classes.singleTab} ${
-                  tab.title === activeTab ? classes.active : null
-                }`}
-                key={`tab-${index}`}
-              >
-                {tab.title}
-              </button>
-            );
-          })}
-        </div>
-        <div className={classes.content}>
-          {tabs.find((tab) => tab.title === activeTab).content}
-        </div>
+    <div className={classes.report}>
+      <div className={classes.tabs}>
+        {tabs.map((tab, index) => {
+          return (
+            <button
+              onClick={() => setActiveTab(tab.title)}
+              className={`${classes.singleTab} ${
+                tab.title === activeTab ? classes.active : null
+              }`}
+              key={`tab-${index}`}
+            >
+              {tab.title}
+            </button>
+          );
+        })}
       </div>
-    </MonthProvider>
+      <div className={classes.content}>
+        {tabs.find((tab) => tab.title === activeTab).content}
+      </div>
+    </div>
   );
 };
