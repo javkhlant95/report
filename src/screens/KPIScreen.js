@@ -1,7 +1,6 @@
 import classes from "./KPIScreen.module.css";
-import { VendorFilter } from "../components/KPI/VendorFilter";
 import { KPIBarChart } from "../components/KPI/KPIBarChart";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FilterHeader } from "../components/Filters";
 
 export const KPIScreen = () => {
@@ -9,29 +8,6 @@ export const KPIScreen = () => {
   const [vendors, setVendors] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
-
-  const fetchOrders = async () => {
-    try {
-      const res = await fetch(
-        `https://api2.ebazaar.mn/api/orders?order_start=2023-05-01&order_end=2023-05-02&page=all`,
-        {
-          method: "GET",
-          headers: {
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }
-      );
-      const data = await res.json();
-
-      setOrders(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
 
   const [labels, setLabels] = useState([
     "January",
@@ -57,7 +33,6 @@ export const KPIScreen = () => {
         label: "2022",
         data: labels.map(() => Math.round(Math.random() * 70)),
         backgroundColor: "#93eb34",
-        // pointStyle: "circle",
         borderWidth: 1,
         pointStyle: "rectRot",
         pointRadius: 5,

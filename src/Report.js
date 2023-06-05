@@ -23,6 +23,7 @@ export const Report = () => {
     11: [],
     12: [],
   });
+  const [vendors, setVendors] = useState([]);
 
   const fetchOrders = async () => {
     try {
@@ -63,14 +64,34 @@ export const Report = () => {
     }
   };
 
+  const fetchVendors = async () => {
+    try {
+      const res = await fetch(
+        `https://api2.ebazaar.mn/api/backoffice/suppliers`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
+        }
+      );
+
+      const data = await res.json();
+      setVendors(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    fetchVendors();
   }, []);
 
   const tabs = [
     {
       title: "Management",
-      content: <ManagementScreen orders={orders} />,
+      content: <ManagementScreen orders={orders} vendors={vendors} />,
     },
     {
       title: "KPI",

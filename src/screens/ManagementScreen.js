@@ -7,10 +7,9 @@ const countUnique = (arr) => {
   return new Set(arr).size;
 };
 
-export const ManagementScreen = ({ orders }) => {
+export const ManagementScreen = ({ orders, vendors }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
 
-  const [vendors, setVendors] = useState([]);
   const [states, setStates] = useState([]);
   const [statuses, setStatuses] = useState([]);
 
