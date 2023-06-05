@@ -44,9 +44,6 @@
   border-bottom: 1px solid #e5e5e5;
   cursor: pointer;
 }
-.tableRow .label {
-  align-self: start;
-}
 
 .tableRow:hover {
   background-color: rgba(175, 170, 170, 0.5);
@@ -68,11 +65,6 @@
   padding-top: 10px;
   border-top: 1px solid #fea61d;
   width: 100%;
-}
-
-.tableFooter .total {
-  text-align: start;
-  margin-right: 10px;
 }
 
 .tableFooter span {

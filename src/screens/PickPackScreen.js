@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { PickPackRow } from "../components/PickPack/PickPackRow";
-import { VendorFilter } from "../components/PickPack/VendorFilter";
 import classes from "./PickPackScreen.module.css";
 import { PickPackDoughnutChart } from "../components/PickPack/PickPackDoughnutChart";
 import { SupplierTable } from "../components/PickPack/SupplierTable";
+import { FilterHeader } from "../components/Filters";
 
 export const PickPackScreen = () => {
+  const [vendors, setVendors] = useState([]);
+  const [statuses, setStatuses] = useState([]);
+  const [states, setStates] = useState([]);
   const [labels, setlabels] = useState([
     "Mon",
     "Tueshdbhdbhb",
@@ -72,17 +75,8 @@ export const PickPackScreen = () => {
   };
 
   return (
-    <>
-      <div className={classes.screenHead}>
-        <div className={classes.filters}>
-          <VendorFilter />
-          <VendorFilter />
-          <VendorFilter />
-        </div>
-
-        {/* <StatusFilters />
-        <MonthFilter /> */}
-      </div>
+    <div className={classes.screenWrapper}>
+      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
       <div className={classes.pickPackContent}>
         <PickPackRow />
         <div className={classes.pickPackDataContent}>
@@ -92,6 +86,6 @@ export const PickPackScreen = () => {
           <SupplierTable />
         </div>
       </div>
-    </>
+    </div>
   );
 };

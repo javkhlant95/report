@@ -51,7 +51,7 @@ export const MauDauLineChart = ({ data, title }) => {
       <Line
         options={options}
         data={data}
-        style={{ width: 1000, height: 200 }}
+        style={{ width: 1000, height: 190 }}
       />
     </div>
   );

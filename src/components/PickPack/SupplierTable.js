@@ -27,7 +27,7 @@ export const SupplierTable = () => {
           })}
         </div>
         <div className={classes.tableFooter}>
-          <span className={classes.total}>Total</span>
+          <span>Total</span>
           <span>61,341</span>
           <span>203,061,745</span>
           <span>25692</span>
