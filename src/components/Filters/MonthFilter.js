@@ -1,8 +1,7 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import classes from "./MonthFilter.module.css";
-import { MonthContext } from "../../contexts/MonthContext";
 
-export const MonthFilter = () => {
+export const MonthFilter = ({ currentMonth, setCurrentMonth }) => {
   const months = [
     { label: "January", value: 1 },
     { label: "February", value: 2 },
@@ -17,8 +16,6 @@ export const MonthFilter = () => {
     { label: "November", value: 11 },
     { label: "December", value: 12 },
   ];
-
-  const { currentMonth, setCurrentMonth } = useContext(MonthContext);
 
   const [currentMonthIndex, setCurrentMonthIndex] = useState(
     new Date().getMonth() - 1
