@@ -38,23 +38,24 @@ export const Report = () => {
             "Content-Type": "application/json",
             ebazaar_token: localStorage.getItem("ebazaar_token"),
           },
-          body: JSON.stringify({
-            start_date: `2023-${i}-01`,
-            end_date: `2023-${i}-31`,
-            projection: {
-              order_id: 1,
-              supplier_id: 1,
-              customer_id: 1,
-              line: 1,
-              grand_total: 1,
-              status: 1,
-              business_type_id: 1,
-              order_date: 1,
-              tradeshop_id: 1,
-            },
-          }),
-        });
-
+            body: JSON.stringify({
+              start_date: `2023-${i}-01`,
+              end_date: `2023-${i}-31`,
+              projection: {
+                order_id: 1,
+                supplier_id: 1,
+                customer_id: 1,
+                line: 1,
+                grand_total: 1,
+                status: 1,
+                business_type_id: 1,
+                order_date: 1,
+                tradeshop_id: 1,
+                user_id: 1,
+              },
+            }),
+          }
+        );
         const data = await res.json();
 
         setOrders((prev) => ({ ...prev, [i]: data }));
