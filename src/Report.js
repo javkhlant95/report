@@ -30,27 +30,30 @@ export const Report = () => {
       const currentMonth = new Date().getMonth() + 1;
 
       for (let i = currentMonth; i >= 1; i--) {
-        const res = await fetch("https://api2.ebazaar.mn/api/order/duplicate/get", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-          body: JSON.stringify({
-            start_date: `2023-${i}-01`,
-            end_date: `2023-${i}-31`,
-            projection: {
-              order_id: 1,
-              supplier_id: 1,
-              customer_id: 1,
-              line: 1,
-              grand_total: 1,
-              status: 1,
-              business_type_id: 1,
-              order_date: 1,
+        const res = await fetch(
+          "https://api2.ebazaar.mn/api/order/duplicate/get",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ebazaar_token: localStorage.getItem("ebazaar_token"),
             },
-          }),
-        });
+            body: JSON.stringify({
+              start_date: `2023-${i}-01`,
+              end_date: `2023-${i}-31`,
+              projection: {
+                order_id: 1,
+                supplier_id: 1,
+                customer_id: 1,
+                line: 1,
+                grand_total: 1,
+                status: 1,
+                business_type_id: 1,
+                order_date: 1,
+              },
+            }),
+          }
+        );
 
         const data = await res.json();
 
@@ -63,12 +66,15 @@ export const Report = () => {
 
   const fetchVendors = async () => {
     try {
-      const res = await fetch(`https://api2.ebazaar.mn/api/backoffice/suppliers`, {
-        headers: {
-          "Content-Type": "application/json",
-          ebazaar_token: localStorage.getItem("ebazaar_token"),
-        },
-      });
+      const res = await fetch(
+        `https://api2.ebazaar.mn/api/backoffice/suppliers`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
+        }
+      );
 
       const data = await res.json();
       setVendors(data.data);
@@ -92,7 +98,7 @@ export const Report = () => {
       content: <KPIScreen orders={orders} />,
     },
     { title: "MAU/DAU", content: <MauDauScreen /> },
-    { title: "Supplier", content: <SupplierScreen /> },
+    { title: "Supplier", content: <SupplierScreen orders={orders} /> },
     { title: "PickPack", content: <PickPackScreen /> },
   ];
   const [activeTab, setActiveTab] = useState("Management");
@@ -104,7 +110,9 @@ export const Report = () => {
           return (
             <button
               onClick={() => setActiveTab(tab.title)}
-              className={`${classes.singleTab} ${tab.title === activeTab ? classes.active : null}`}
+              className={`${classes.singleTab} ${
+                tab.title === activeTab ? classes.active : null
+              }`}
               key={`tab-${index}`}
             >
               {tab.title}
@@ -112,7 +120,9 @@ export const Report = () => {
           );
         })}
       </div>
-      <div className={classes.content}>{tabs.find((tab) => tab.title === activeTab).content}</div>
+      <div className={classes.content}>
+        {tabs.find((tab) => tab.title === activeTab).content}
+      </div>
     </div>
   );
 };
