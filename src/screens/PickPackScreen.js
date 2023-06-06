@@ -5,8 +5,9 @@ import { PickPackDoughnutChart } from "../components/PickPack/PickPackDoughnutCh
 import { SupplierTable } from "../components/PickPack/SupplierTable";
 import { FilterHeader } from "../components/Filters";
 
-export const PickPackScreen = () => {
-  const [vendors, setVendors] = useState([]);
+export const PickPackScreen = ({ vendors }) => {
+  const [currentVendors, setCurrentVendors] = useState({});
+
   const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
   const [labels, setlabels] = useState([
@@ -76,7 +77,13 @@ export const PickPackScreen = () => {
 
   return (
     <div className={classes.screenWrapper}>
-      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
+      <FilterHeader
+        vendors={vendors}
+        states={states}
+        statuses={statuses}
+        currentVendors={currentVendors}
+        setCurrentVendors={setCurrentVendors}
+      />
       <div className={classes.pickPackContent}>
         <PickPackRow />
         <div className={classes.pickPackDataContent}>

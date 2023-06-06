@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import classes from "./VendorFilter.module.css";
+import { Context } from "../../contexts/Context";
 
-export const VendorFilter = ({ vendors }) => {
+export const VendorFilter = () => {
+  const { vendors, currentVendor, setCurrentVendor } = useContext(Context);
+
   const [showDropDown, setShowDropDown] = useState(false);
 
   return (
@@ -14,7 +17,7 @@ export const VendorFilter = ({ vendors }) => {
           }}
           className={classes.dropDownButton}
         >
-          <span>Бүгд</span>
+          <span>{currentVendor.name ? currentVendor.name : "Бүгд"}</span>
           <img src="/icons/chevron-down.svg" alt="Chevron Down" />
         </button>
 
@@ -26,7 +29,16 @@ export const VendorFilter = ({ vendors }) => {
           {vendors.map((vendor) => {
             return (
               <div className={classes.singleVendorList} key={vendor.id}>
-                <input type="checkbox" id={vendor.name} />
+                <input
+                  checked={currentVendor.id === vendor.id}
+                  onChange={(e) => {
+                    if (e.target.checked) setCurrentVendor(vendor);
+                    else setCurrentVendor({});
+                  }}
+                  type="checkbox"
+                  name="Vendor"
+                  id={vendor.name}
+                />
                 <label htmlFor={vendor.name}>{vendor.name}</label>
               </div>
             );

@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import classes from "./StatesFilter.module.css";
+import { Context } from "../../contexts/Context";
 
-export const StateFilter = ({ states }) => {
+export const StateFilter = () => {
+  const { states } = useContext(Context);
+
   const [showDropDown, setShowDropDown] = useState(false);
 
   return (

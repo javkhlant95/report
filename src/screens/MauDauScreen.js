@@ -5,10 +5,10 @@ import { MauDauLineChart } from "../components/MauDau/MauDauLineChart";
 import { MauDauRow } from "../components/MauDau/MauDauRow";
 import { FilterHeader } from "../components/Filters";
 
-export const MauDauScreen = ({ orders }) => {
+export const MauDauScreen = ({ orders, vendors }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentVendors, setCurrentVendors] = useState({});
 
-  const [vendors, setVendors] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
   const [barLabels, setBarLabels] = useState([
@@ -157,6 +157,8 @@ export const MauDauScreen = ({ orders }) => {
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
         removeMonth
+        currentVendors={currentVendors}
+        setCurrentVendors={setCurrentVendors}
       />
 
       <div className={classes.mauDauContent}>
