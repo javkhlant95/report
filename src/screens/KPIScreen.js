@@ -67,6 +67,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 2_000_000_000,
         },
         deliveredAmount: {
           title: "Хүргэсэн дүн",
@@ -81,6 +82,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 2_000_000_000,
         },
         merchant: {
           title: "Мерчант",
@@ -95,6 +97,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 1000,
         },
         deliveryRate: {
           title: "Хүргэлтийн хувь",
@@ -109,6 +112,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 100,
         },
       };
 
@@ -214,6 +218,7 @@ export const KPIScreen = ({ orders }) => {
               <KPIBarChart
                 key={`kpi-bar-chart-${index}`}
                 data={stats[key].data}
+                maxScale={stats[key].maxScale}
               />
             </div>
           );

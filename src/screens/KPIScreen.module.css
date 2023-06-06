@@ -1,6 +1,6 @@
 .kpiContent {
   width: 100%;
-  height: 88vh;
+  height: 88%;
   background-color: #e9ecef;
   padding: 20px;
   display: flex;
@@ -10,7 +10,7 @@
 
 .barWrapper {
   width: calc((100% - 20px) / 2);
-  height: calc((88vh - 60px) / 2);
+  height: calc((100% - 20px) / 2);
 }
 
 .title {

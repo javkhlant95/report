@@ -5,7 +5,9 @@ import { MauDauLineChart } from "../components/MauDau/MauDauLineChart";
 import { MauDauRow } from "../components/MauDau/MauDauRow";
 import { FilterHeader } from "../components/Filters";
 
-export const MauDauScreen = () => {
+export const MauDauScreen = ({ orders }) => {
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+
   const [vendors, setVendors] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
@@ -148,7 +150,14 @@ export const MauDauScreen = () => {
 
   return (
     <>
-      <FilterHeader vendors={vendors} states={states} statuses={statuses} />
+      <FilterHeader
+        vendors={vendors}
+        states={states}
+        statuses={statuses}
+        currentMonth={currentMonth}
+        setCurrentMonth={setCurrentMonth}
+        removeMonth
+      />
 
       <div className={classes.mauDauContent}>
         <div className={classes.chartContent}>

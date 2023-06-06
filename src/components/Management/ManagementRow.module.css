@@ -1,17 +1,17 @@
 .row {
   width: 100%;
   flex: 1;
-  /* border: 1px solid black; */
 }
 
 .title {
   font-style: italic;
   font-size: 26px;
-  margin-bottom: 10px;
+  line-height: 36px;
 }
 
 .boxs {
   width: 100%;
+  height: calc(100% - 46px);
   display: flex;
   align-items: center;
   justify-content: space-between;

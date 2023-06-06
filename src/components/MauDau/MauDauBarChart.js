@@ -31,6 +31,7 @@ export const MauDauBarChart = ({ data, title }) => {
         labels: {
           usePointStyle: true,
         },
+        display: false,
       },
       title: {
         display: true,
