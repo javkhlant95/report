@@ -98,7 +98,7 @@ export const Report = () => {
       content: <KPIScreen orders={orders} />,
     },
     { title: "MAU/DAU", content: <MauDauScreen orders={orders} /> },
-    { title: "Supplier", content: <SupplierScreen /> },
+    { title: "Supplier", content: <SupplierScreen orders={orders} /> },
     { title: "PickPack", content: <PickPackScreen /> },
   ];
   const [activeTab, setActiveTab] = useState("Management");
