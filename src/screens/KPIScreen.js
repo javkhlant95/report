@@ -19,14 +19,47 @@ const labels = [
   "December",
 ];
 
-export const KPIScreen = ({ orders }) => {
+export const KPIScreen = ({ orders, statuses }) => {
   const [currentMonth, setCurrentMonth] = useState(13);
+  const [currentStatus, setCurrentStatus] = useState(0);
 
   const [vendors, setVendors] = useState([]);
-  const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
+  const [avStatuses, setAvStatuses] = useState([]);
 
   const [stats, setStats] = useState({});
+
+  useEffect(() => {
+    const newStatuses = [];
+
+    if (currentMonth === 13) {
+      let allOrders = [];
+
+      for (const key in orders) {
+        allOrders = [...allOrders, ...orders[key]];
+      }
+
+      for (const status of statuses) {
+        for (const order of allOrders) {
+          if (status.OrderStatusID === order.status) {
+            newStatuses.push(status);
+            break;
+          }
+        }
+      }
+    } else {
+      for (const status of statuses) {
+        for (const order of orders[currentMonth]) {
+          if (status.OrderStatusID === order.status) {
+            newStatuses.push(status);
+            break;
+          }
+        }
+      }
+    }
+
+    setAvStatuses(newStatuses);
+  }, [statuses, currentMonth, orders]);
 
   useEffect(() => {
     if (currentMonth === 13) {
@@ -36,21 +69,32 @@ export const KPIScreen = ({ orders }) => {
       const deliveryRateRes = [];
 
       Object.keys(orders).map((key) => {
-        totalAmountRes.push(
-          orders[key].reduce((acc, cur) => acc + cur.grand_total, 0)
-        );
-        deliveredAmountRes.push(
-          orders[key]
-            .filter((order) => order.status === 3)
-            .reduce((acc, cur) => acc + cur.grand_total, 0)
-        );
-        merchantRes.push(
-          countUnique(orders[key].map((order) => order.customer_id))
-        );
-        deliveryRateRes.push(
-          (orders[key].filter((order) => order.status === 3).length * 100) /
-            orders[key].length
-        );
+        if (currentStatus === 0) {
+          totalAmountRes.push(orders[key].reduce((acc, cur) => acc + cur.grand_total, 0));
+          deliveredAmountRes.push(
+            orders[key]
+              .filter((order) => order.status === 3)
+              .reduce((acc, cur) => acc + cur.grand_total, 0)
+          );
+          merchantRes.push(countUnique(orders[key].map((order) => order.customer_id)));
+          deliveryRateRes.push(
+            (orders[key].filter((order) => order.status === 3).length * 100) / orders[key].length
+          );
+        } else {
+          const filteredOrders = orders[key].filter((order) => order.status === currentStatus);
+
+          totalAmountRes.push(filteredOrders.reduce((acc, cur) => acc + cur.grand_total, 0));
+          deliveredAmountRes.push(
+            filteredOrders
+              .filter((order) => order.status === 3)
+              .reduce((acc, cur) => acc + cur.grand_total, 0)
+          );
+          merchantRes.push(countUnique(filteredOrders.map((order) => order.customer_id)));
+          deliveryRateRes.push(
+            (filteredOrders.filter((order) => order.status === 3).length * 100) /
+              filteredOrders.length
+          );
+        }
       });
 
       const newStat = {
@@ -67,7 +111,6 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
-          maxScale: 2_000_000_000,
         },
         deliveredAmount: {
           title: "Хүргэсэн дүн",
@@ -82,7 +125,6 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
-          maxScale: 2_000_000_000,
         },
         merchant: {
           title: "Мерчант",
@@ -97,7 +139,6 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
-          maxScale: 1000,
         },
         deliveryRate: {
           title: "Хүргэлтийн хувь",
@@ -127,10 +168,11 @@ export const KPIScreen = ({ orders }) => {
               {
                 label: "2023",
                 data: [
-                  orders[currentMonth].reduce(
-                    (acc, cur) => acc + cur.grand_total,
-                    0
-                  ),
+                  currentStatus === 0
+                    ? orders[currentMonth].reduce((acc, cur) => acc + cur.grand_total, 0)
+                    : orders[currentMonth]
+                        .filter((order) => order.status === currentStatus)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0),
                 ],
                 backgroundColor: "#3461eb",
                 barPercentage: 0.1,
@@ -146,9 +188,14 @@ export const KPIScreen = ({ orders }) => {
               {
                 label: "2023",
                 data: [
-                  orders[currentMonth]
-                    .filter((order) => order.status === 3)
-                    .reduce((acc, cur) => acc + cur.grand_total, 0),
+                  currentStatus === 0
+                    ? orders[currentMonth]
+                        .filter((order) => order.status === 3)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0)
+                    : orders[currentMonth]
+                        .filter((order) => order.status === currentStatus)
+                        .filter((order) => order.status === 3)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0),
                 ],
                 backgroundColor: "#3461eb",
                 barPercentage: 0.1,
@@ -164,9 +211,13 @@ export const KPIScreen = ({ orders }) => {
               {
                 label: "2023",
                 data: [
-                  countUnique(
-                    orders[currentMonth].map((order) => order.customer_id)
-                  ),
+                  currentStatus === 0
+                    ? countUnique(orders[currentMonth].map((order) => order.customer_id))
+                    : countUnique(
+                        orders[currentMonth]
+                          .filter((order) => order.status === currentStatus)
+                          .map((order) => order.customer_id)
+                      ),
                 ],
                 backgroundColor: "#3461eb",
                 barPercentage: 0.1,
@@ -182,38 +233,51 @@ export const KPIScreen = ({ orders }) => {
               {
                 label: "2023",
                 data: [
-                  (orders[currentMonth].filter((order) => order.status === 3)
-                    .length *
-                    100) /
-                    orders[currentMonth].length,
+                  currentStatus === 0
+                    ? (orders[currentMonth]
+                        .filter((order) => order.status === 3)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0) *
+                        100) /
+                      orders[currentMonth].reduce((acc, cur) => acc + cur.grand_total, 0)
+                    : (orders[currentMonth]
+                        .filter((order) => order.status === currentStatus)
+                        .filter((order) => order.status === 3)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0) *
+                        100) /
+                      orders[currentMonth]
+                        .filter((order) => order.status === currentStatus)
+                        .reduce((acc, cur) => acc + cur.grand_total, 0),
                 ],
                 backgroundColor: "#3461eb",
                 barPercentage: 0.1,
               },
             ],
           },
+          maxScale: 100,
         },
       };
 
       setStats(newStat);
     }
-  }, [currentMonth, orders]);
+  }, [currentMonth, orders, currentStatus]);
 
   return (
     <>
       <FilterHeader
         vendors={vendors}
         states={states}
-        statuses={statuses}
+        statuses={avStatuses}
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
         removeMonth
+        currentStatus={currentStatus}
+        setCurrentStatus={setCurrentStatus}
       />
 
       <div className={classes.kpiContent}>
         {Object.keys(stats).map((key, index) => {
           return (
-            <div className={classes.barWrapper}>
+            <div key={`kpi-bar-${index}`} className={classes.barWrapper}>
               <h1 className={classes.title}>{stats[key].title}</h1>
               <KPIBarChart
                 key={`kpi-bar-chart-${index}`}

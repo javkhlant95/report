@@ -4,17 +4,17 @@ import { ManagementRow } from "../components/Management/ManagementRow";
 import { FilterHeader } from "../components/Filters";
 import { countUnique } from "../utils/countUnique";
 
-export const ManagementScreen = ({ orders, vendors }) => {
+export const ManagementScreen = ({ orders, vendors, statuses }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentStatus, setCurrentStatus] = useState(0);
 
   const [states, setStates] = useState([]);
-  const [statuses, setStatuses] = useState([]);
+  const [avStatuses, setAvStatuses] = useState([]);
+  const [currentOrders, setCurrentOrders] = useState(orders[currentMonth]);
 
   const [totalStat, setTotalStat] = useState({});
 
   const calculate = () => {
-    const currentOrders = orders[currentMonth];
-
     const gtIds = ["1", "2", "3", "4", "5"];
     const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
 
@@ -219,17 +219,41 @@ export const ManagementScreen = ({ orders, vendors }) => {
   };
 
   useEffect(() => {
+    if (currentStatus === 0) {
+      setCurrentOrders(orders[currentMonth]);
+    } else {
+      setCurrentOrders(orders[currentMonth].filter((order) => order.status === currentStatus));
+    }
+  }, [currentMonth, orders[currentMonth], currentStatus]);
+
+  useEffect(() => {
     calculate();
-  }, [currentMonth, orders[currentMonth]]);
+  }, [currentMonth, currentOrders]);
+
+  useEffect(() => {
+    const newStatuses = [];
+    for (const status of statuses) {
+      for (const order of orders[currentMonth]) {
+        if (order.status === status.OrderStatusID) {
+          newStatuses.push(status);
+          break;
+        }
+      }
+    }
+
+    setAvStatuses(newStatuses);
+  }, [statuses, currentMonth, orders[currentMonth]]);
 
   return (
     <div className={classes.screenWrapper}>
       <FilterHeader
         vendors={vendors}
         states={states}
-        statuses={statuses}
+        statuses={avStatuses}
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
+        currentStatus={currentStatus}
+        setCurrentStatus={setCurrentStatus}
       />
 
       <div className={classes.managementContent}>

@@ -92,7 +92,7 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
       newVendorStats.push(stat);
     }
 
-    setVendorStat(newVendorStats.filter((stat) => stat.total != 0));
+    setVendorStat(newVendorStats.filter((stat) => stat.total !== 0));
   };
 
   const calculateType = () => {
@@ -132,7 +132,7 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
       newMerchantStat.push(stat);
     }
 
-    setMerchantStat(newMerchantStat.filter((stat) => stat.total != 0));
+    setMerchantStat(newMerchantStat.filter((stat) => stat.total !== 0));
   };
 
   useEffect(() => {
@@ -165,24 +165,13 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
                 <h2>{stat.label}</h2>
                 <h1
                   style={{
-                    color: stat.goal
-                      ? stat.goal > stat.stat
-                        ? "#D64554"
-                        : "#1AAB40"
-                      : "inherit",
+                    color: stat.goal ? (stat.goal > stat.stat ? "#D64554" : "#1AAB40") : "inherit",
                   }}
                 >
-                  {stat.stat >= 1_000_000
-                    ? Math.round(stat.stat / 1_000_000) + "M"
-                    : stat.stat}
+                  {stat.stat >= 1_000_000 ? Math.round(stat.stat / 1_000_000) + "M" : stat.stat}
                 </h1>
                 {stat.goal && (
-                  <p>
-                    Goal:{" "}
-                    {stat.goal >= 1_000_00
-                      ? stat.goal / 1_000_000 + "M"
-                      : stat.goal}
-                  </p>
+                  <p>Goal: {stat.goal >= 1_000_00 ? stat.goal / 1_000_000 + "M" : stat.goal}</p>
                 )}
               </div>
             );
