@@ -8,6 +8,8 @@ export const FilterHeader = ({
   currentMonth,
   setCurrentMonth,
   removeMonth = false,
+  currentStatus,
+  setCurrentStatus,
 }) => {
   return (
     <div className={classes.filterHeader}>
@@ -17,7 +19,11 @@ export const FilterHeader = ({
         <StateFilter states={states} />
       </div>
 
-      <StatusFilters statuses={statuses} />
+      <StatusFilters
+        statuses={statuses}
+        currentStatus={currentStatus}
+        setCurrentStatus={setCurrentStatus}
+      />
       <MonthFilter
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
