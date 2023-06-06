@@ -1,6 +1,25 @@
+import { useEffect, useState } from "react";
 import classes from "./MerchantTable.module.css";
 
-export const MerchantTable = () => {
+export const MerchantTable = ({ merchantStat }) => {
+  const [stats, setStats] = useState(merchantStat);
+
+  const [total, setTotal] = useState({
+    totalAmount: 0,
+    orderAmount: 0,
+  });
+
+  useEffect(() => {
+    const newTotal = { ...total };
+    for (const stat of merchantStat) {
+      newTotal.totalAmount += stat.total;
+      newTotal.orderAmount += stat.order;
+    }
+
+    setTotal(newTotal);
+    setStats(merchantStat);
+  }, [merchantStat]);
+
   return (
     <div className={classes.tableWrapper}>
       <div className={classes.table}>
@@ -12,12 +31,12 @@ export const MerchantTable = () => {
         </div>
 
         <div className={classes.tableBody}>
-          {Array.from(Array(100)).map((val, index) => {
+          {stats.map((stat, index) => {
             return (
               <div key={`table-row-${index}`} className={classes.tableRow}>
-                <span>Олимп супермаркет</span>
-                <span>9,581,600</span>
-                <span>4</span>
+                <span>{stat.name}</span>
+                <span>{stat.total}</span>
+                <span>{stat.order}</span>
                 <span>58.6%</span>
               </div>
             );
@@ -26,8 +45,8 @@ export const MerchantTable = () => {
 
         <div className={classes.tableFooter}>
           <span>Total</span>
-          <span>125,297,346</span>
-          <span>266</span>
+          <span>{total.totalAmount}</span>
+          <span>{total.orderAmount}</span>
           <span>47,3%</span>
         </div>
       </div>

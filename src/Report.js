@@ -24,6 +24,7 @@ export const Report = () => {
     12: [],
   });
   const [vendors, setVendors] = useState([]);
+  const [merchants, setMerchants] = useState([]);
 
   const fetchOrders = async () => {
     try {
@@ -50,6 +51,7 @@ export const Report = () => {
                 status: 1,
                 business_type_id: 1,
                 order_date: 1,
+                tradeshop_id: 1,
               },
             }),
           }
@@ -83,9 +85,30 @@ export const Report = () => {
     }
   };
 
+  const fetchMerchants = async () => {
+    try {
+      const res = await fetch(
+        "https://api2.ebazaar.mn/api/merchants?page=all",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
+        }
+      );
+      const data = await res.json();
+
+      setMerchants(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
     fetchVendors();
+    fetchMerchants();
   }, []);
 
   const tabs = [
@@ -98,7 +121,16 @@ export const Report = () => {
       content: <KPIScreen orders={orders} />,
     },
     { title: "MAU/DAU", content: <MauDauScreen orders={orders} /> },
-    { title: "Supplier", content: <SupplierScreen orders={orders} /> },
+    {
+      title: "Supplier",
+      content: (
+        <SupplierScreen
+          orders={orders}
+          vendors={vendors}
+          merchants={merchants}
+        />
+      ),
+    },
     { title: "PickPack", content: <PickPackScreen /> },
   ];
   const [activeTab, setActiveTab] = useState("Management");
