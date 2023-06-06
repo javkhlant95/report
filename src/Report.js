@@ -132,7 +132,14 @@ export const Report = () => {
     { title: "MAU/DAU", content: <MauDauScreen orders={orders} /> },
     {
       title: "Supplier",
-      content: <SupplierScreen orders={orders} vendors={vendors} merchants={merchants} />,
+      content: (
+        <SupplierScreen
+          orders={orders}
+          vendors={vendors}
+          merchants={merchants}
+          statuses={statuses}
+        />
+      ),
     },
     { title: "PickPack", content: <PickPackScreen /> },
   ];

@@ -6,7 +6,7 @@ export const StatusFilters = ({ statuses, currentStatus, setCurrentStatus }) => 
 
   return (
     <div className={classes.statusFilters}>
-      {currentIndex !== 0 && (
+      {currentIndex !== 0 && statuses.length !== 0 && (
         <button onClick={() => setCurrentIndex(currentIndex - 1)} className={classes.chevronLeft}>
           <img src="/icons/chevron-left.svg" alt="Left Chevron" />
         </button>
@@ -28,7 +28,7 @@ export const StatusFilters = ({ statuses, currentStatus, setCurrentStatus }) => 
         );
       })}
 
-      {currentIndex !== statuses.length - 2 && (
+      {currentIndex !== statuses.length - 2 && statuses.length !== 0 && (
         <button onClick={() => setCurrentIndex(currentIndex + 1)} className={classes.chevronRight}>
           <img src="/icons/chevron-right.svg" alt="Right Chevron" />
         </button>
