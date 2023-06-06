@@ -137,6 +137,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 2_000_000_000,
         },
         deliveredAmount: {
           title: "Хүргэсэн дүн",
@@ -155,6 +156,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 2_000_000_000,
         },
         merchant: {
           title: "Мерчант",
@@ -173,6 +175,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 1_000,
         },
         deliveryRate: {
           title: "Хүргэлтийн хувь",
@@ -192,6 +195,7 @@ export const KPIScreen = ({ orders }) => {
               },
             ],
           },
+          maxScale: 100,
         },
       };
 

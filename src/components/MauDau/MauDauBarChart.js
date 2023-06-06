@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-export const MauDauBarChart = ({ data, title }) => {
+export const MauDauBarChart = ({ data, title, maxScale }) => {
   const options = {
     maintainAspectRatio: false,
     plugins: {
@@ -39,6 +39,23 @@ export const MauDauBarChart = ({ data, title }) => {
         color: "#57758F",
         font: {
           size: 20,
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: maxScale,
+        ticks: {
+          callback: function (value) {
+            return value >= 1_000_000_000
+              ? value / 1_000_000_000 + "bn"
+              : value >= 1_000_000
+              ? value / 1_000_000 + "M"
+              : value >= 1_000
+              ? value / 1_000 + "K"
+              : value;
+          },
         },
       },
     },

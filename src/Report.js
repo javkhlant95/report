@@ -50,6 +50,8 @@ export const Report = () => {
                 status: 1,
                 business_type_id: 1,
                 order_date: 1,
+                tradeshop_id: 1,
+                user_id: 1,
               },
             }),
           }
