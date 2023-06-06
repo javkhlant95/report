@@ -22,20 +22,38 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "top",
-      align: "start",
+export const KPIBarChart = ({ data, maxScale }) => {
+  const options = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top",
+        align: "start",
+        labels: {
+          usePointStyle: true,
+        },
+      },
+      title: {
+        display: true,
+      },
     },
-    title: {
-      display: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: maxScale,
+        ticks: {
+          callback: function (value) {
+            return value >= 1_000_000_000
+              ? value / 1_000_000_000 + "bn"
+              : value >= 1_000_000
+              ? value / 1_000_000 + "m"
+              : value;
+          },
+        },
+      },
     },
-  },
-};
+  };
 
-export const KPIBarChart = ({ data }) => {
   return (
     <div className={classes.bar}>
       <Bar options={options} data={data} />

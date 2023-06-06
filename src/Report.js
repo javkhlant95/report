@@ -97,7 +97,7 @@ export const Report = () => {
       title: "KPI",
       content: <KPIScreen orders={orders} />,
     },
-    { title: "MAU/DAU", content: <MauDauScreen /> },
+    { title: "MAU/DAU", content: <MauDauScreen orders={orders} /> },
     { title: "Supplier", content: <SupplierScreen orders={orders} /> },
     { title: "PickPack", content: <PickPackScreen /> },
   ];
