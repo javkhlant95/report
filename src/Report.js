@@ -25,37 +25,35 @@ export const Report = () => {
   });
   const [vendors, setVendors] = useState([]);
   const [merchants, setMerchants] = useState([]);
+  const [statuses, setStatuses] = useState([]);
 
   const fetchOrders = async () => {
     try {
       const currentMonth = new Date().getMonth() + 1;
 
       for (let i = currentMonth; i >= 1; i--) {
-        const res = await fetch(
-          "https://api2.ebazaar.mn/api/order/duplicate/get",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ebazaar_token: localStorage.getItem("ebazaar_token"),
+        const res = await fetch("https://api2.ebazaar.mn/api/order/duplicate/get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
+          body: JSON.stringify({
+            start_date: `2023-${i}-01`,
+            end_date: `2023-${i}-31`,
+            projection: {
+              order_id: 1,
+              supplier_id: 1,
+              customer_id: 1,
+              line: 1,
+              grand_total: 1,
+              status: 1,
+              business_type_id: 1,
+              order_date: 1,
+              tradeshop_id: 1,
             },
-            body: JSON.stringify({
-              start_date: `2023-${i}-01`,
-              end_date: `2023-${i}-31`,
-              projection: {
-                order_id: 1,
-                supplier_id: 1,
-                customer_id: 1,
-                line: 1,
-                grand_total: 1,
-                status: 1,
-                business_type_id: 1,
-                order_date: 1,
-                tradeshop_id: 1,
-              },
-            }),
-          }
-        );
+          }),
+        });
 
         const data = await res.json();
 
@@ -68,15 +66,12 @@ export const Report = () => {
 
   const fetchVendors = async () => {
     try {
-      const res = await fetch(
-        `https://api2.ebazaar.mn/api/backoffice/suppliers`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }
-      );
+      const res = await fetch(`https://api2.ebazaar.mn/api/backoffice/suppliers`, {
+        headers: {
+          "Content-Type": "application/json",
+          ebazaar_token: localStorage.getItem("ebazaar_token"),
+        },
+      });
 
       const data = await res.json();
       setVendors(data.data);
@@ -87,19 +82,32 @@ export const Report = () => {
 
   const fetchMerchants = async () => {
     try {
-      const res = await fetch(
-        "https://api2.ebazaar.mn/api/merchants?page=all",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }
-      );
+      const res = await fetch("https://api2.ebazaar.mn/api/merchants?page=all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ebazaar_token: localStorage.getItem("ebazaar_token"),
+        },
+      });
       const data = await res.json();
 
       setMerchants(data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchStatuses = async () => {
+    try {
+      const res = await fetch("https://api2.ebazaar.mn/api/order/status/list", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ebazaar_token: localStorage.getItem("ebazaar_token"),
+        },
+      });
+      const data = await res.json();
+      setStatuses(data.data);
     } catch (error) {
       console.log(error);
     }
@@ -109,27 +117,22 @@ export const Report = () => {
     fetchOrders();
     fetchVendors();
     fetchMerchants();
+    fetchStatuses();
   }, []);
 
   const tabs = [
     {
       title: "Management",
-      content: <ManagementScreen orders={orders} vendors={vendors} />,
+      content: <ManagementScreen orders={orders} vendors={vendors} statuses={statuses} />,
     },
     {
       title: "KPI",
-      content: <KPIScreen orders={orders} />,
+      content: <KPIScreen orders={orders} statuses={statuses} />,
     },
     { title: "MAU/DAU", content: <MauDauScreen orders={orders} /> },
     {
       title: "Supplier",
-      content: (
-        <SupplierScreen
-          orders={orders}
-          vendors={vendors}
-          merchants={merchants}
-        />
-      ),
+      content: <SupplierScreen orders={orders} vendors={vendors} merchants={merchants} />,
     },
     { title: "PickPack", content: <PickPackScreen /> },
   ];
@@ -142,9 +145,7 @@ export const Report = () => {
           return (
             <button
               onClick={() => setActiveTab(tab.title)}
-              className={`${classes.singleTab} ${
-                tab.title === activeTab ? classes.active : null
-              }`}
+              className={`${classes.singleTab} ${tab.title === activeTab ? classes.active : null}`}
               key={`tab-${index}`}
             >
               {tab.title}
@@ -152,9 +153,7 @@ export const Report = () => {
           );
         })}
       </div>
-      <div className={classes.content}>
-        {tabs.find((tab) => tab.title === activeTab).content}
-      </div>
+      <div className={classes.content}>{tabs.find((tab) => tab.title === activeTab).content}</div>
     </div>
   );
 };

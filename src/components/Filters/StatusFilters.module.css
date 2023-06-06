@@ -55,3 +55,8 @@
   cursor: pointer;
   border-bottom: 1px solid black;
 }
+
+.singleStatus.active {
+  background-color: black;
+  color: white;
+}
