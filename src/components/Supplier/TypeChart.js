@@ -5,13 +5,13 @@ import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-export const TypeChart = () => {
+export const TypeChart = ({ typeStat }) => {
   const data = {
     labels: ["GT", "Horeca"],
     datasets: [
       {
         label: "Amount",
-        data: [195_000_000, 8_000_000],
+        data: [typeStat.gtAmount, typeStat.horecaAmount],
         backgroundColor: ["#F9C74F", "#E66C37"],
         borderColor: ["#F9C74F", "#E66C37"],
       },

@@ -1,6 +1,36 @@
+import { useEffect, useState } from "react";
 import classes from "./SupplierTable.module.css";
 
-export const SupplierTable = () => {
+export const SupplierTable = ({ vendorStat }) => {
+  const [total, setTotal] = useState({
+    totalAmount: 0,
+    deliveredAmount: 0,
+    canceledAmount: 0,
+    order: 0,
+    merchants: 0,
+    rate: 0,
+  });
+
+  useEffect(() => {
+    const newTotal = { ...total };
+
+    let totalRate = 0;
+
+    for (const stat of vendorStat) {
+      newTotal.totalAmount += stat.total;
+      newTotal.deliveredAmount += stat.delivered;
+      newTotal.canceledAmount += stat.canceled;
+      newTotal.order += stat.order;
+      newTotal.merchants += stat.merchants;
+      totalRate += stat.rate;
+    }
+
+    newTotal.rate =
+      totalRate / vendorStat.filter((stat) => stat.rate > 0).length;
+
+    setTotal(newTotal);
+  }, [vendorStat]);
+
   return (
     <div className={classes.tableWrapper}>
       <div className={classes.tableHead}>
@@ -14,16 +44,16 @@ export const SupplierTable = () => {
       </div>
 
       <div className={classes.tableBody}>
-        {Array.from(Array(1000)).map((val, index) => {
+        {vendorStat.map((stat, index) => {
           return (
-            <div className={classes.tableRow}>
-              <span>Шуурхай түгээлт</span>
-              <span>203,061,745</span>
-              <span>183,819,275</span>
-              <span>19,242,470</span>
-              <span>580</span>
-              <span>173</span>
-              <span>90.5%</span>
+            <div key={`vendor-stat-${index}`} className={classes.tableRow}>
+              <span>{stat.name}</span>
+              <span>{stat.total}</span>
+              <span>{stat.delivered}</span>
+              <span>{stat.canceled}</span>
+              <span>{stat.order}</span>
+              <span>{stat.merchants}</span>
+              <span>{stat.rate.toFixed(1)}%</span>
             </div>
           );
         })}
@@ -31,12 +61,12 @@ export const SupplierTable = () => {
 
       <div className={classes.tableFooter}>
         <span>Total</span>
-        <span>912,758,125</span>
-        <span>774,886,265</span>
-        <span>134,231,921</span>
-        <span>2166</span>
-        <span>278</span>
-        <span>84,9%</span>
+        <span>{total.totalAmount}</span>
+        <span>{total.deliveredAmount}</span>
+        <span>{total.canceledAmount}</span>
+        <span>{total.order}</span>
+        <span>{total.merchants}</span>
+        <span>{total.rate.toFixed(1)}%</span>
       </div>
     </div>
   );
