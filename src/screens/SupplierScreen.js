@@ -6,11 +6,12 @@ import { FilterHeader } from "../components/Filters";
 import { MerchantTable } from "../components/Supplier/MerchantTable";
 import { countUnique } from "../utils/countUnique";
 
-export const SupplierScreen = ({ orders, vendors, merchants }) => {
+export const SupplierScreen = ({ orders, vendors, merchants, statuses }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [currentStatus, setCurrentStatus] = useState(0);
 
-  const [statuses, setStatuses] = useState([]);
   const [states, setStates] = useState([]);
+  const [avStatuses, setAvStatuses] = useState([]);
 
   const [totalStat, setTotalStat] = useState({});
   const [vendorStat, setVendorStat] = useState([]);
@@ -21,36 +22,78 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
     const currentOrders = orders[currentMonth];
 
     const newTotalStat = {
-      total: { stat: currentOrders.length, label: "Захиалга" },
+      total: {
+        stat:
+          currentStatus === 0
+            ? currentOrders.length
+            : currentOrders.filter((order) => order.status === currentStatus).length,
+        label: "Захиалга",
+      },
       totalAmount: {
-        stat: currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0),
+        stat:
+          currentStatus === 0
+            ? currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
+            : currentOrders
+                .filter((order) => order.status === currentStatus)
+                .reduce((acc, cur) => acc + cur.grand_total, 0),
         label: "Нийт дүн",
       },
       delivered: {
         label: "Хүргэсэн",
-        stat: currentOrders
-          .filter((order) => order.status === 3)
-          .reduce((acc, cur) => acc + cur.grand_total, 0),
+        stat:
+          currentStatus === 0
+            ? currentOrders
+                .filter((order) => order.status === 3)
+                .reduce((acc, cur) => acc + cur.grand_total, 0)
+            : currentOrders
+                .filter((order) => order.status === currentStatus)
+                .filter((order) => order.status === 3)
+                .reduce((acc, cur) => acc + cur.grand_total, 0),
         goal: 1_392_000_000,
       },
       customers: {
         label: "Идэвхитэй харилцагч",
-        stat: countUnique(currentOrders.map((order) => order.customer_id)),
+        stat:
+          currentStatus === 0
+            ? countUnique(currentOrders.map((order) => order.customer_id))
+            : countUnique(
+                currentOrders
+                  .filter((order) => order.status === currentStatus)
+                  .map((order) => order.customer_id)
+              ),
       },
       suppliers: {
         label: "Нийлүүлэгч",
-        stat: countUnique(currentOrders.map((order) => order.supplier_id)),
+        stat:
+          currentStatus === 0
+            ? countUnique(currentOrders.map((order) => order.supplier_id))
+            : countUnique(
+                currentOrders
+                  .filter((order) => order.status === currentStatus)
+                  .map((order) => order.supplier_id)
+              ),
       },
       deliveryRate: {
         label: "Хүргэлтийн хувь",
         stat:
-          (Math.round(
-            (currentOrders
-              .filter((order) => order.status === 3)
-              .reduce((acc, cur) => acc + cur.grand_total, 0) *
-              100) /
-              currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
-          ) || 0) + "%",
+          (currentStatus === 0
+            ? Math.round(
+                (currentOrders
+                  .filter((order) => order.status === 3)
+                  .reduce((acc, cur) => acc + cur.grand_total, 0) *
+                  100) /
+                  currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
+              ) || 0
+            : Math.round(
+                (currentOrders
+                  .filter((order) => order.status === currentStatus)
+                  .filter((order) => order.status === 3)
+                  .reduce((acc, cur) => acc + cur.grand_total, 0) *
+                  100) /
+                  currentOrders
+                    .filter((order) => order.status === currentStatus)
+                    .reduce((acc, cur) => acc + cur.grand_total, 0)
+              ) || 0) + "%",
       },
     };
     setTotalStat(newTotalStat);
@@ -92,7 +135,20 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
       newVendorStats.push(stat);
     }
 
-    setVendorStat(newVendorStats.filter((stat) => stat.total !== 0));
+    let result;
+    if (currentStatus === 0) {
+      result = newVendorStats.filter((stat) => stat.total !== 0);
+    } else if (currentStatus === 3) {
+      result = newVendorStats
+        .filter((stat) => stat.total !== 0)
+        .filter((stat) => stat.delivered > 0);
+    } else if (currentStatus === 5) {
+      result = newVendorStats
+        .filter((stat) => stat.total !== 0)
+        .filter((stat) => stat.canceled > 0);
+    }
+
+    setVendorStat(result);
   };
 
   const calculateType = () => {
@@ -101,12 +157,23 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
     const gtIds = ["1", "2", "3", "4", "5"];
     const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
 
-    newTypeStat.gtAmount = orders[currentMonth]
-      .filter((order) => gtIds.includes(order.business_type_id))
-      .reduce((acc, cur) => acc + cur.grand_total, 0);
-    newTypeStat.horecaAmount = orders[currentMonth]
-      .filter((order) => horekaIds.includes(order.business_type_id))
-      .reduce((acc, cur) => acc + cur.grand_total, 0);
+    if (currentStatus === 0) {
+      newTypeStat.gtAmount = orders[currentMonth]
+        .filter((order) => gtIds.includes(order.business_type_id))
+        .reduce((acc, cur) => acc + cur.grand_total, 0);
+      newTypeStat.horecaAmount = orders[currentMonth]
+        .filter((order) => horekaIds.includes(order.business_type_id))
+        .reduce((acc, cur) => acc + cur.grand_total, 0);
+    } else {
+      newTypeStat.gtAmount = orders[currentMonth]
+        .filter((order) => gtIds.includes(order.business_type_id))
+        .filter((order) => order.status === currentStatus)
+        .reduce((acc, cur) => acc + cur.grand_total, 0);
+      newTypeStat.horecaAmount = orders[currentMonth]
+        .filter((order) => horekaIds.includes(order.business_type_id))
+        .filter((order) => order.status === currentStatus)
+        .reduce((acc, cur) => acc + cur.grand_total, 0);
+    }
 
     setTypeStat(newTypeStat);
   };
@@ -136,6 +203,16 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
   };
 
   useEffect(() => {
+    const newStatuses = [];
+
+    for (const status of statuses) {
+      if (status.OrderStatusID === 3 || status.OrderStatusID === 5) newStatuses.push(status);
+    }
+
+    setAvStatuses(newStatuses);
+  }, [statuses]);
+
+  useEffect(() => {
     calculateMerchant();
   }, [currentMonth, orders[currentMonth], merchants]);
 
@@ -143,16 +220,18 @@ export const SupplierScreen = ({ orders, vendors, merchants }) => {
     calculateVendors();
     calculateRow();
     calculateType();
-  }, [currentMonth, orders[currentMonth]]);
+  }, [currentMonth, orders[currentMonth], currentStatus]);
 
   return (
     <div className={classes.screenWrapper}>
       <FilterHeader
         vendors={vendors}
         states={states}
-        statuses={statuses}
+        statuses={avStatuses}
         currentMonth={currentMonth}
         setCurrentMonth={setCurrentMonth}
+        currentStatus={currentStatus}
+        setCurrentStatus={setCurrentStatus}
       />
 
       <div className={classes.suppliersContent}>
