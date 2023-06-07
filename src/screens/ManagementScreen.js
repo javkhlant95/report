@@ -1,5 +1,5 @@
 import classes from "./ManagementScreen.module.css";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { ManagementRow } from "../components/Management/ManagementRow";
 import { FilterHeader } from "../components/Filters";
 import { countUnique } from "../utils/countUnique";
@@ -26,30 +26,37 @@ export const ManagementScreen = () => {
           order: {
             label: "Захиалга",
             stat: 0,
+            goal: 0,
           },
           totalAmount: {
             label: "Нийт дүн",
             stat: 0,
+            goal: 0,
           },
           deliveredAmount: {
             label: "Хүргэсэн",
             stat: 0,
+            goal: 0,
           },
           activeCustomers: {
             label: "Идэвхитэй харилцагч",
             stat: 0,
+            goal: 0,
           },
           suppliers: {
             label: "Нийлүүлэгч",
             stat: 0,
+            goal: 0,
           },
           orderFrequency: {
             label: "Захиалгын давтамж",
             stat: 0,
+            goal: 0,
           },
           deliveryRate: {
             label: "Хүргэлтийн хувь",
             stat: "0%",
+            goal: 0,
           },
         },
       },
@@ -61,30 +68,37 @@ export const ManagementScreen = () => {
           order: {
             label: "Захиалга",
             stat: 0,
+            goal: 0,
           },
           totalAmount: {
             label: "Нийт дүн",
             stat: 0,
+            goal: 0,
           },
           deliveredAmount: {
             label: "Хүргэсэн",
             stat: 0,
+            goal: 0,
           },
           activeCustomers: {
             label: "Идэвхитэй харилцагч",
             stat: 0,
+            goal: 0,
           },
           suppliers: {
             label: "Нийлүүлэгч",
             stat: 0,
+            goal: 0,
           },
           orderFrequency: {
             label: "Захиалгын давтамж",
             stat: 0,
+            goal: 0,
           },
           deliveryRate: {
             label: "Хүргэлтийн хувь",
             stat: "0%",
+            goal: 0,
           },
         },
       },
@@ -96,30 +110,37 @@ export const ManagementScreen = () => {
           order: {
             label: "Захиалга",
             stat: 0,
+            goal: 0,
           },
           totalAmount: {
             label: "Нийт дүн",
             stat: 0,
+            goal: 0,
           },
           deliveredAmount: {
             label: "Хүргэсэн",
             stat: 0,
+            goal: 0,
           },
           activeCustomers: {
             label: "Идэвхитэй харилцагч",
             stat: 0,
+            goal: 0,
           },
           suppliers: {
             label: "Нийлүүлэгч",
             stat: 0,
+            goal: 0,
           },
           orderFrequency: {
             label: "Захиалгын давтамж",
             stat: 0,
+            goal: 0,
           },
           deliveryRate: {
             label: "Хүргэлтийн хувь",
             stat: "0%",
+            goal: 0,
           },
         },
       },
@@ -131,30 +152,37 @@ export const ManagementScreen = () => {
           order: {
             label: "Захиалга",
             stat: 0,
+            goal: 0,
           },
           totalAmount: {
             label: "Нийт дүн",
             stat: 0,
+            goal: 0,
           },
           deliveredAmount: {
             label: "Хүргэсэн",
             stat: 0,
+            goal: 0,
           },
           activeCustomers: {
             label: "Идэвхитэй харилцагч",
             stat: 0,
+            goal: 0,
           },
           suppliers: {
             label: "Нийлүүлэгч",
             stat: 0,
+            goal: 0,
           },
           orderFrequency: {
             label: "Захиалгын давтамж",
             stat: 0,
+            goal: 0,
           },
           deliveryRate: {
             label: "Хүргэлтийн хувь",
             stat: "0%",
+            goal: 0,
           },
         },
       },
@@ -166,53 +194,57 @@ export const ManagementScreen = () => {
           order: {
             label: "Захиалга",
             stat: 0,
+            goal: 0,
           },
           totalAmount: {
             label: "Нийт дүн",
             stat: 0,
+            goal: 0,
           },
           deliveredAmount: {
             label: "Хүргэсэн",
             stat: 0,
+            goal: 0,
           },
           activeCustomers: {
             label: "Идэвхитэй харилцагч",
             stat: 0,
+            goal: 0,
           },
           suppliers: {
             label: "Нийлүүлэгч",
             stat: 0,
+            goal: 0,
           },
           orderFrequency: {
             label: "Захиалгын давтамж",
             stat: 0,
+            goal: 0,
           },
           deliveryRate: {
             label: "Хүргэлтийн хувь",
             stat: "0%",
+            goal: 0,
           },
         },
       },
     };
 
-    let currentOrders = orders[currentMonth];
+    let currentOrders =
+      currentMonth === 13 ? orders[new Date().getMonth() + 1] : orders[currentMonth];
 
     if (currentVendor.id) {
-      currentOrders = currentOrders.filter(
-        (order) => order.supplier_id === currentVendor.id
-      );
+      currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
     }
 
     if (currentStatus > 0) {
-      currentOrders = currentOrders.filter(
-        (order) => order.status === currentStatus
-      );
+      currentOrders = currentOrders.filter((order) => order.status === currentStatus);
     }
 
     if (currentOrders.length === 0) return result;
 
-    Object.keys(result).map((key) => {
-      let filteredOrders;
+    for (const key in result) {
+      let filteredOrders = currentOrders;
       switch (result[key].filter) {
         case "gt":
           filteredOrders = currentOrders.filter((order) =>
@@ -221,20 +253,14 @@ export const ManagementScreen = () => {
           break;
         case "horeca":
           filteredOrders = currentOrders.filter((order) =>
-            ["6", "7", "8", "9", "10", "11", "12", "13", "14"].includes(
-              order.business_type_id
-            )
+            ["6", "7", "8", "9", "10", "11", "12", "13", "14"].includes(order.business_type_id)
           );
           break;
         case "shuurkhai":
-          filteredOrders = currentOrders.filter(
-            (order) => order.supplier_id === 13884
-          );
+          filteredOrders = currentOrders.filter((order) => order.supplier_id === 13884);
           break;
         case "other":
-          filteredOrders = currentOrders.filter(
-            (order) => order.supplier_id !== 13884
-          );
+          filteredOrders = currentOrders.filter((order) => order.supplier_id !== 13884);
           break;
         default:
           filteredOrders = currentOrders;
@@ -253,10 +279,7 @@ export const ManagementScreen = () => {
       }
 
       singleStat.order.stat = filteredOrders.length;
-      singleStat.totalAmount.stat = filteredOrders.reduce(
-        (acc, cur) => acc + cur.grand_total,
-        0
-      );
+      singleStat.totalAmount.stat = filteredOrders.reduce((acc, cur) => acc + cur.grand_total, 0);
       singleStat.deliveredAmount.stat = filteredOrders
         .filter((order) => order.status === 3)
         .reduce((acc, cur) => acc + cur.grand_total, 0);
@@ -269,10 +292,8 @@ export const ManagementScreen = () => {
           : filteredOrders.map((order) => order.supplier_id)
       );
       singleStat.deliveryRate.stat =
-        Math.round(
-          (singleStat.deliveredAmount.stat * 100) / singleStat.totalAmount.stat
-        ) + "%";
-    });
+        Math.round((singleStat.deliveredAmount.stat * 100) / singleStat.totalAmount.stat) + "%";
+    }
 
     return result;
   }, [currentMonth, orders, currentStatus, currentVendor]);

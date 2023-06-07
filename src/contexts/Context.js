@@ -24,37 +24,35 @@ export const ContextProvider = ({ children }) => {
   const [statuses, setStatuses] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [states, setStates] = useState([]);
+  const [merchants, setMerchants] = useState([]);
 
   const fetchOrders = async () => {
     try {
       const currentMonth = new Date().getMonth() + 1;
 
       for (let i = currentMonth; i >= 1; i--) {
-        const res = await fetch(
-          "https://api2.ebazaar.mn/api/order/duplicate/get",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ebazaar_token: localStorage.getItem("ebazaar_token"),
+        const res = await fetch("https://api2.ebazaar.mn/api/order/duplicate/get", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ebazaar_token: localStorage.getItem("ebazaar_token"),
+          },
+          body: JSON.stringify({
+            start_date: `2023-${i}-01`,
+            end_date: `2023-${i}-31`,
+            projection: {
+              order_id: 1,
+              supplier_id: 1,
+              customer_id: 1,
+              line: 1,
+              grand_total: 1,
+              status: 1,
+              business_type_id: 1,
+              order_date: 1,
+              tradeshop_id: 1,
             },
-            body: JSON.stringify({
-              start_date: `2023-${i}-01`,
-              end_date: `2023-${i}-31`,
-              projection: {
-                order_id: 1,
-                supplier_id: 1,
-                customer_id: 1,
-                line: 1,
-                grand_total: 1,
-                status: 1,
-                business_type_id: 1,
-                order_date: 1,
-                tradeshop_id: 1,
-              },
-            }),
-          }
-        );
+          }),
+        });
 
         const data = await res.json();
 
@@ -84,16 +82,13 @@ export const ContextProvider = ({ children }) => {
 
   const fetchVendors = async () => {
     try {
-      const res = await fetch(
-        "https://api2.ebazaar.mn/api/backoffice/suppliers",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ebazaar_token: localStorage.getItem("ebazaar_token"),
-          },
-        }
-      );
+      const res = await fetch("https://api2.ebazaar.mn/api/backoffice/suppliers", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ebazaar_token: localStorage.getItem("ebazaar_token"),
+        },
+      });
       const data = await res.json();
 
       setVendors(
@@ -108,10 +103,34 @@ export const ContextProvider = ({ children }) => {
     }
   };
 
+  const fetchMerchants = async () => {
+    try {
+      const res = await fetch("https://api2.ebazaar.mn/api/merchants?page=all", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ebazaar_token: localStorage.getItem("ebazaar_token"),
+        },
+      });
+      const data = await res.json();
+
+      setMerchants(
+        data.data.sort((a, b) => {
+          if (a.tradeshop_name > b.tradeshop_name) return 1;
+          if (a.tradeshop_name < b.tradeshop_name) return -1;
+          return 0;
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
     fetchStatus();
     fetchVendors();
+    fetchMerchants();
   }, []);
 
   const value = {
@@ -119,6 +138,7 @@ export const ContextProvider = ({ children }) => {
     statuses,
     vendors,
     states,
+    merchants,
     currentMonth,
     setCurrentMonth,
     currentStatus,

@@ -3,26 +3,26 @@ import { useContext, useMemo, useState } from "react";
 import { Context } from "../../contexts/Context";
 
 export const StatusFilters = () => {
-  const {
-    statuses,
-    currentStatus,
-    setCurrentStatus,
-    currentMonth,
-    orders,
-    currentVendor,
-  } = useContext(Context);
+  const { statuses, currentStatus, setCurrentStatus, currentMonth, orders, currentVendor } =
+    useContext(Context);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const usedStatuses = useMemo(() => {
     const result = [];
 
-    let currentOrders = orders[currentMonth];
+    let currentOrders = [];
+
+    if (currentMonth < 13) {
+      currentOrders = orders[currentMonth];
+    } else {
+      Object.keys(orders).map((key) => {
+        currentOrders = [...currentOrders, ...orders[key]];
+      });
+    }
 
     if (currentVendor.id) {
-      currentOrders = currentOrders.filter(
-        (order) => order.supplier_id === currentVendor.id
-      );
+      currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
     }
 
     for (const status of statuses) {
@@ -40,10 +40,7 @@ export const StatusFilters = () => {
   return (
     <div className={classes.statusFilters}>
       {currentIndex !== 0 && usedStatuses.length !== 0 && (
-        <button
-          onClick={() => setCurrentIndex(currentIndex - 1)}
-          className={classes.chevronLeft}
-        >
+        <button onClick={() => setCurrentIndex(currentIndex - 1)} className={classes.chevronLeft}>
           <img src="/icons/chevron-left.svg" alt="Left Chevron" />
         </button>
       )}
@@ -52,11 +49,7 @@ export const StatusFilters = () => {
         return (
           <button
             onClick={() =>
-              setCurrentStatus(
-                currentStatus === status.OrderStatusID
-                  ? 0
-                  : status.OrderStatusID
-              )
+              setCurrentStatus(currentStatus === status.OrderStatusID ? 0 : status.OrderStatusID)
             }
             key={`status-filter-${status.OrderStatusID}`}
             className={`${classes.singleStatus} ${
@@ -68,15 +61,11 @@ export const StatusFilters = () => {
         );
       })}
 
-      {currentIndex !== usedStatuses.length - 2 &&
-        usedStatuses.length !== 0 && (
-          <button
-            onClick={() => setCurrentIndex(currentIndex + 1)}
-            className={classes.chevronRight}
-          >
-            <img src="/icons/chevron-right.svg" alt="Right Chevron" />
-          </button>
-        )}
+      {currentIndex !== usedStatuses.length - 2 && usedStatuses.length !== 0 && (
+        <button onClick={() => setCurrentIndex(currentIndex + 1)} className={classes.chevronRight}>
+          <img src="/icons/chevron-right.svg" alt="Right Chevron" />
+        </button>
+      )}
     </div>
   );
 };

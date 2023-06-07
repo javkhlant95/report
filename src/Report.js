@@ -1,5 +1,5 @@
 import classes from "./Report.module.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ManagementScreen,
   KPIScreen,
@@ -49,9 +49,7 @@ export const Report = () => {
             );
           })}
         </div>
-        <div className={classes.content}>
-          {tabs.find((tab) => tab.title === activeTab).content}
-        </div>
+        <div className={classes.content}>{tabs.find((tab) => tab.title === activeTab).content}</div>
       </div>
     </ContextProvider>
   );

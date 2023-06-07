@@ -44,6 +44,22 @@ export const MauDauLineChart = ({ data, title }) => {
         },
       },
     },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function (value) {
+            return value >= 1_000_000_000
+              ? value / 1_000_000_000 + "bn"
+              : value >= 1_000_000
+              ? value / 1_000_000 + "M"
+              : value >= 1_000
+              ? value / 1_000 + "K"
+              : value;
+          },
+        },
+      },
+    },
   };
 
   return (

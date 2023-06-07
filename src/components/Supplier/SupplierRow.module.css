@@ -1,0 +1,33 @@
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  height: 13%;
+}
+
+.singleStat {
+  width: calc((100% - 120px) / 7);
+  background-color: white;
+  text-align: center;
+  align-self: stretch;
+  border-radius: 10px;
+}
+
+.singleStat h2 {
+  color: #577590;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.singleStat h1 {
+  color: #252423;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.singleStat p {
+  color: #252423;
+  font-size: 12px;
+  margin-top: -4px;
+}
