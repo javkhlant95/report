@@ -414,6 +414,7 @@ export const MauDauScreen = () => {
     return result;
   }, [lineStats]);
 
+
   return (
     <>
       <FilterHeader removeMonth />
@@ -441,7 +442,7 @@ export const MauDauScreen = () => {
                   style={{ width: 300 }}
                 />
               );
-            })}
+            })} */}
           </div>
         </div>
         <MauDauRow

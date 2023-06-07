@@ -13,7 +13,7 @@ import { Bar } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
-export const MauDauBarChart = ({ data, title }) => {
+export const MauDauBarChart = ({ data, title, maxScale }) => {
   const options = {
     maintainAspectRatio: false,
     plugins: {

@@ -23,7 +23,7 @@ ChartJS.register(
   Legend
 );
 
-export const MauDauLineChart = ({ data, title }) => {
+export const MauDauLineChart = ({ data, title, maxScale }) => {
   const options = {
     maintainAspectRatio: false,
     plugins: {
