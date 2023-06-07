@@ -1,23 +1,33 @@
 .report {
+  position: fixed;
+  left: 72px;
+  top: 53px;
+  right: 0;
+  bottom: 0;
   background-color: white;
-  display: flex;
-  align-items: flex-start;
 }
 
 .content {
   background-color: #e9ecef;
   flex: 1;
-  height: 100vh;
+  /* min-height: 100vh; */
+  position: fixed;
+  top: 53px;
+  right: 0;
+  bottom: 0;
+  left: 272px;
 }
 
 .tabs {
-  height: 100vh;
+  width: 200px;
+  position: fixed;
+
   display: flex;
   flex-direction: column;
 }
 
 .singleTab {
-  height: 20%;
+  height: 100px;
   padding: 0 10px;
   display: flex;
   align-items: center;

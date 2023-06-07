@@ -1,7 +1,13 @@
 import { Report } from "./Report";
 
 function App() {
-  return <Report />;
+  return (
+    <>
+      <div className="header"></div>
+      <div className="navigation"></div>
+      <Report />
+    </>
+  );
 }
 
 export default App;

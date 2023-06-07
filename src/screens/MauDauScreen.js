@@ -25,8 +25,13 @@ const monthLabels = [
 const dateLabels = Array.from(Array(31)).map((val, index) => index + 1);
 
 export const MauDauScreen = () => {
-  const { orders, currentMonth, setCurrentMonth, currentStatus, currentVendor } =
-    useContext(Context);
+  const {
+    orders,
+    currentMonth,
+    setCurrentMonth,
+    currentStatus,
+    currentVendor,
+  } = useContext(Context);
 
   useEffect(() => {
     setCurrentMonth(13);
@@ -84,16 +89,24 @@ export const MauDauScreen = () => {
       let currentOrders = orders[i];
 
       if (currentVendor.id) {
-        currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
+        currentOrders = currentOrders.filter(
+          (order) => order.supplier_id === currentVendor.id
+        );
       }
 
       if (currentStatus > 0) {
-        currentOrders = currentOrders.filter((order) => order.status === currentStatus);
+        currentOrders = currentOrders.filter(
+          (order) => order.status === currentStatus
+        );
       }
 
-      uniqueMerchantCount.push(countUnique(currentOrders.map((order) => order.customer_id)));
+      uniqueMerchantCount.push(
+        countUnique(currentOrders.map((order) => order.customer_id))
+      );
       totalOrderCount.push(currentOrders.length);
-      totalOrderAmount.push(currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0));
+      totalOrderAmount.push(
+        currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
+      );
     }
 
     for (const key in result) {
@@ -108,15 +121,21 @@ export const MauDauScreen = () => {
       switch (key) {
         case "merchants":
           barData.datasets[0].data =
-            currentMonth < 13 ? [uniqueMerchantCount[currentMonth - 1]] : uniqueMerchantCount;
+            currentMonth < 13
+              ? [uniqueMerchantCount[currentMonth - 1]]
+              : uniqueMerchantCount;
           break;
         case "orders":
           barData.datasets[0].data =
-            currentMonth < 13 ? [totalOrderCount[currentMonth - 1]] : totalOrderCount;
+            currentMonth < 13
+              ? [totalOrderCount[currentMonth - 1]]
+              : totalOrderCount;
           break;
         case "totalAmount":
           barData.datasets[0].data =
-            currentMonth < 13 ? [totalOrderAmount[currentMonth - 1]] : totalOrderAmount;
+            currentMonth < 13
+              ? [totalOrderAmount[currentMonth - 1]]
+              : totalOrderAmount;
           break;
         default:
           break;
@@ -190,27 +209,27 @@ export const MauDauScreen = () => {
       },
     };
 
-    const dailyMerchantCountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(() =>
-      Array.from(Array(31)).map(() => 0)
-    );
+    const dailyMerchantCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-    const deliveredDailyMerchantCountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(
-      () => Array.from(Array(31)).map(() => 0)
-    );
+    const deliveredDailyMerchantCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-    const dailyOrderCountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(() =>
-      Array.from(Array(31)).map(() => 0)
-    );
-    const deliveredDailyOrderCountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(() =>
-      Array.from(Array(31)).map(() => 0)
-    );
+    const dailyOrderCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
+    const deliveredDailyOrderCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-    const dailyOrderAmountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(() =>
-      Array.from(Array(31)).map(() => 0)
-    );
-    const deliveredDailyOrderAmountByMonth = Array.from(Array(new Date().getMonth() + 1)).map(() =>
-      Array.from(Array(31)).map(() => 0)
-    );
+    const dailyOrderAmountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
+    const deliveredDailyOrderAmountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
     const dailyMerchantCount = Array.from(Array(31)).map(() => 0);
     const deliveredDailyMerchantCount = Array.from(Array(31)).map(() => 0);
@@ -225,11 +244,15 @@ export const MauDauScreen = () => {
       let currentOrders = orders[i];
 
       if (currentVendor.id) {
-        currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
+        currentOrders = currentOrders.filter(
+          (order) => order.supplier_id === currentVendor.id
+        );
       }
 
       if (currentStatus > 0) {
-        currentOrders = currentOrders.filter((order) => order.status === currentStatus);
+        currentOrders = currentOrders.filter(
+          (order) => order.status === currentStatus
+        );
       }
 
       for (let j = 1; j <= 31; j++) {
@@ -238,54 +261,58 @@ export const MauDauScreen = () => {
             .filter((order) => new Date(order.order_date).getDate() === j)
             .map((order) => order.customer_id)
         );
-
         deliveredDailyMerchantCountByMonth[i - 1][j - 1] += countUnique(
           currentOrders
-            .filter((order) => order.status === 3 && new Date(order.order_date).getDate() === j)
+            .filter(
+              (order) =>
+                order.status === 3 && new Date(order.order_date).getDate() === j
+            )
             .map((order) => order.customer_id)
         );
-
         dailyOrderCountByMonth[i - 1][j - 1] += currentOrders.filter(
           (order) => new Date(order.order_date).getDate() === j
         ).length;
         deliveredDailyOrderCountByMonth[i - 1][j - 1] += currentOrders.filter(
-          (order) => order.status === 3 && new Date(order.order_date).getDate() === j
+          (order) =>
+            order.status === 3 && new Date(order.order_date).getDate() === j
         ).length;
-
         dailyOrderAmountByMonth[i - 1][j - 1] += currentOrders
           .filter((order) => new Date(order.order_date).getDate() === j)
           .reduce((acc, cur) => acc + cur.grand_total, 0);
-
         deliveredDailyOrderAmountByMonth[i - 1][j - 1] += currentOrders
-          .filter((order) => order.status === 3 && new Date(order.order_date).getDate() === j)
+          .filter(
+            (order) =>
+              order.status === 3 && new Date(order.order_date).getDate() === j
+          )
           .reduce((acc, cur) => acc + cur.grand_total, 0);
-
         dailyMerchantCount[j - 1] += countUnique(
           currentOrders
             .filter((order) => new Date(order.order_date).getDate() === j)
             .map((order) => order.customer_id)
         );
-
         deliveredDailyMerchantCount[j - 1] += countUnique(
           currentOrders
-            .filter((order) => order.status === 3 && new Date(order.order_date).getDate() === j)
+            .filter(
+              (order) =>
+                order.status === 3 && new Date(order.order_date).getDate() === j
+            )
             .map((order) => order.customer_id)
         );
-
         dailyOrderCount[j - 1] += currentOrders.filter(
           (order) => new Date(order.order_date).getDate() === j
         ).length;
-
         deliveredDailyOrderCount[j - 1] += currentOrders.filter(
-          (order) => order.status === 3 && new Date(order.order_date).getDate() === j
+          (order) =>
+            order.status === 3 && new Date(order.order_date).getDate() === j
         ).length;
-
         dailyOrderAmount[j - 1] += currentOrders
           .filter((order) => new Date(order.order_date).getDate() === j)
           .reduce((acc, cur) => acc + cur.grand_total, 0);
-
         deliveredOrderAmount[j - 1] += currentOrders
-          .filter((order) => order.status === 3 && new Date(order.order_date).getDate() === j)
+          .filter(
+            (order) =>
+              order.status === 3 && new Date(order.order_date).getDate() === j
+          )
           .reduce((acc, cur) => acc + cur.grand_total, 0);
       }
     }
@@ -296,7 +323,9 @@ export const MauDauScreen = () => {
       switch (key) {
         case "merchants":
           lineData[0].data =
-            currentMonth < 13 ? dailyMerchantCountByMonth[currentMonth - 1] : dailyMerchantCount;
+            currentMonth < 13
+              ? dailyMerchantCountByMonth[currentMonth - 1]
+              : dailyMerchantCount;
           lineData[1].data =
             currentMonth < 13
               ? deliveredDailyMerchantCountByMonth[currentMonth - 1]
@@ -304,7 +333,9 @@ export const MauDauScreen = () => {
           break;
         case "orders":
           lineData[0].data =
-            currentMonth < 13 ? dailyOrderCountByMonth[currentMonth - 1] : dailyOrderCount;
+            currentMonth < 13
+              ? dailyOrderCountByMonth[currentMonth - 1]
+              : dailyOrderCount;
           lineData[1].data =
             currentMonth < 13
               ? deliveredDailyOrderCountByMonth[currentMonth - 1]
@@ -312,7 +343,9 @@ export const MauDauScreen = () => {
           break;
         case "totalAmount":
           lineData[0].data =
-            currentMonth < 13 ? dailyOrderAmountByMonth[currentMonth - 1] : dailyOrderAmount;
+            currentMonth < 13
+              ? dailyOrderAmountByMonth[currentMonth - 1]
+              : dailyOrderAmount;
           lineData[1].data =
             currentMonth < 13
               ? deliveredDailyOrderAmountByMonth[currentMonth - 1]
@@ -373,7 +406,8 @@ export const MauDauScreen = () => {
       const data = lineStats[key].data.datasets[0].data;
 
       result[key].data = Math.round(
-        data.reduce((acc, cur) => acc + cur, 0) / data.filter((singleData) => singleData > 0).length
+        data.reduce((acc, cur) => acc + cur, 0) /
+          data.filter((singleData) => singleData > 0).length
       );
     }
 
@@ -410,7 +444,10 @@ export const MauDauScreen = () => {
             })}
           </div>
         </div>
-        <MauDauRow monthlyRowStats={monthlyRowStats} dailyRowStats={dailyRowStats} />
+        <MauDauRow
+          monthlyRowStats={monthlyRowStats}
+          dailyRowStats={dailyRowStats}
+        />
       </div>
     </>
   );
