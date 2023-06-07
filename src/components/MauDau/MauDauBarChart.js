@@ -11,26 +11,13 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend);
 
 export const MauDauBarChart = ({ data, title, maxScale }) => {
   const options = {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top",
-        align: "start",
-        labels: {
-          usePointStyle: true,
-        },
         display: false,
       },
       title: {
@@ -45,7 +32,6 @@ export const MauDauBarChart = ({ data, title, maxScale }) => {
     scales: {
       y: {
         beginAtZero: true,
-        max: maxScale,
         ticks: {
           callback: function (value) {
             return value >= 1_000_000_000

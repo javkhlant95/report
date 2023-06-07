@@ -47,7 +47,6 @@ export const MauDauLineChart = ({ data, title, maxScale }) => {
     scales: {
       y: {
         beginAtZero: true,
-        max: maxScale,
         ticks: {
           callback: function (value) {
             return value >= 1_000_000_000

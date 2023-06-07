@@ -1,12 +1,13 @@
 import classes from "./MauDauScreen.module.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { MauDauBarChart } from "../components/MauDau/MauDauBarChart";
 import { MauDauLineChart } from "../components/MauDau/MauDauLineChart";
 import { MauDauRow } from "../components/MauDau/MauDauRow";
 import { FilterHeader } from "../components/Filters";
+import { Context } from "../contexts/Context";
 import { countUnique } from "../utils/countUnique";
 
-const labels = [
+const monthLabels = [
   "January",
   "February",
   "March",
@@ -21,356 +22,433 @@ const labels = [
   "December",
 ];
 
-const lineLabels = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
-  23, 24, 25, 26, 27, 28, 29, 30, 31,
-];
+const dateLabels = Array.from(Array(31)).map((val, index) => index + 1);
 
-export const MauDauScreen = ({ orders }) => {
-  // const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-  const [currentMonth, setCurrentMonth] = useState(13);
-
-  const [vendors, setVendors] = useState([]);
-  const [statuses, setStatuses] = useState([]);
-  const [states, setStates] = useState([]);
-
-  const [stats, setStats] = useState({});
-  const [lineData, setLineData] = useState({});
-
-  const [statsDaily, setStatsDaily] = useState({});
-
-  const [dailyStats, setDailyStats] = useState({
-    merchant: { title: "Өдрийн дундаж мерчант", stat: 0 },
-  });
-  const [monthlyStats, setMonthlyStats] = useState({
-    merchant: { title: "Сарын дундаж мерчант", stat: 0 },
-    order: { title: "Сарын дундаж захиалга", stat: 0 },
-    totalAmount: { title: "Сарын дундаж борлуулалт", stat: 0 },
-  });
+export const MauDauScreen = () => {
+  const {
+    orders,
+    currentMonth,
+    setCurrentMonth,
+    currentStatus,
+    currentVendor,
+  } = useContext(Context);
 
   useEffect(() => {
-    const newStatsDaily = {};
+    setCurrentMonth(13);
 
-    for (let i = 1; i <= new Date().getMonth() + 1; i++) {
-      newStatsDaily[i] = {
-        order: {
-          total: [],
-          delivered: [],
+    return () => {
+      setCurrentMonth(new Date().getMonth() + 1);
+    };
+  }, []);
+
+  const barStats = useMemo(() => {
+    const result = {
+      merchants: {
+        title: "Харилцагч",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              data: [],
+              backgroundColor: "#eded21",
+            },
+          ],
         },
-      };
+      },
+      orders: {
+        title: "Захиалга",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              data: [],
+              backgroundColor: "#3FDCFF",
+            },
+          ],
+        },
+      },
+      totalAmount: {
+        title: "Нийт дүн",
+        data: {
+          labels: [],
+          datasets: [
+            {
+              data: [],
+              backgroundColor: "#FFB40F",
+            },
+          ],
+        },
+      },
+    };
 
-      for (let j = 1; j <= 31; j++) {
-        newStatsDaily[i].order.total.push(
-          orders[i]
-            .filter((order) => new Date(order.order_date).getDate() === j)
-            .reduce((acc, cur) => acc + cur.grand_total, 0)
+    const uniqueMerchantCount = [];
+    const totalOrderCount = [];
+    const totalOrderAmount = [];
+
+    for (let i = 1; i <= 12; i++) {
+      let currentOrders = orders[i];
+
+      if (currentVendor.id) {
+        currentOrders = currentOrders.filter(
+          (order) => order.supplier_id === currentVendor.id
         );
-        newStatsDaily[i].order.delivered.push(
-          orders[i]
-            .filter(
-              (order) =>
-                new Date(order.order_date).getDate() === j && order.status === 3
-            )
-            .reduce((acc, cur) => acc + cur.grand_total, 0)
+      }
+
+      if (currentStatus > 0) {
+        currentOrders = currentOrders.filter(
+          (order) => order.status === currentStatus
         );
+      }
+
+      uniqueMerchantCount.push(
+        countUnique(currentOrders.map((order) => order.customer_id))
+      );
+      totalOrderCount.push(currentOrders.length);
+      totalOrderAmount.push(
+        currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
+      );
+    }
+
+    for (const key in result) {
+      const barData = result[key].data;
+
+      barData.labels =
+        currentMonth < 13
+          ? [monthLabels[currentMonth - 1]]
+          : monthLabels.slice(0, new Date().getMonth() + 1);
+      barData.datasets[0].barPercentage = currentMonth < 13 ? 0.2 : 1;
+
+      switch (key) {
+        case "merchants":
+          barData.datasets[0].data =
+            currentMonth < 13
+              ? [uniqueMerchantCount[currentMonth - 1]]
+              : uniqueMerchantCount;
+          break;
+        case "orders":
+          barData.datasets[0].data =
+            currentMonth < 13
+              ? [totalOrderCount[currentMonth - 1]]
+              : totalOrderCount;
+          break;
+        case "totalAmount":
+          barData.datasets[0].data =
+            currentMonth < 13
+              ? [totalOrderAmount[currentMonth - 1]]
+              : totalOrderAmount;
+          break;
+        default:
+          break;
       }
     }
 
-    setStatsDaily(newStatsDaily);
-  }, [orders]);
+    return result;
+  }, [orders, currentMonth, currentStatus, currentVendor]);
 
-  // Bar Chart
-  const barChartData = () => {
-    if (currentMonth === 13) {
-      const customerRes = [];
-      const orderAmountRes = [];
-      const totalAmountRes = [];
-
-      Object.keys(orders).map((key) => {
-        customerRes.push(
-          countUnique(orders[key].map((order) => order.customer_id))
-        );
-        orderAmountRes.push(orders[key].length);
-        totalAmountRes.push(
-          orders[key].reduce((acc, cur) => acc + cur.grand_total, 0)
-        );
-      });
-
-      const newBarStat = {
-        customer: {
-          title: "Харилцагч",
-          data: {
-            labels,
-            datasets: [
-              {
-                display: false,
-                label: "2023",
-                data: customerRes,
-                backgroundColor: "#eded21",
-                barPercentage: 1,
-              },
-            ],
-          },
-          maxScale: 500,
+  const lineStats = useMemo(() => {
+    const result = {
+      merchants: {
+        title: "Харилцагч",
+        data: {
+          labels: dateLabels,
+          datasets: [
+            {
+              label: "Нийт",
+              backgroundColor: "#eded21",
+              borderColor: "#eded21",
+              data: [],
+            },
+            {
+              label: "Хүргэсэн",
+              backgroundColor: "#6FD132",
+              borderColor: "#6FD132",
+              data: [],
+            },
+          ],
         },
-
-        order: {
-          title: "Захиалга",
-          data: {
-            labels,
-            datasets: [
-              {
-                display: false,
-                labels: "2023",
-                data: orderAmountRes,
-                backgroundColor: "#3FDCFF",
-                barPercentage: 1,
-              },
-            ],
-          },
-          maxScale: 4_000,
+      },
+      orders: {
+        title: "Захиалга",
+        data: {
+          labels: dateLabels,
+          datasets: [
+            {
+              label: "Нийт",
+              backgroundColor: "#3FDCFF",
+              borderColor: "#3FDCFF",
+              data: [],
+            },
+            {
+              label: "Хүргэсэн",
+              backgroundColor: "#6FD132",
+              borderColor: "#6FD132",
+              data: [],
+            },
+          ],
         },
-
-        totalAmount: {
-          title: "Нийт дүн",
-          data: {
-            labels,
-            datasets: [
-              {
-                display: false,
-                data: totalAmountRes,
-                backgroundColor: "#FFB40F",
-                barPercentage: 1,
-              },
-            ],
-          },
-          maxScale: 1_000_000_000,
+      },
+      totalAmount: {
+        title: "Нийт дүн",
+        data: {
+          labels: dateLabels,
+          datasets: [
+            {
+              label: "Нийт",
+              backgroundColor: "#FFB40F",
+              borderColor: "#FFB40F",
+              data: [],
+            },
+            {
+              label: "Хүргэсэн",
+              backgroundColor: "#6FD132",
+              borderColor: "#6FD132",
+              data: [],
+            },
+          ],
         },
-      };
-      setStats(newBarStat);
-    } else if (currentMonth < 13) {
-      const newBarStat = {
-        customer: {
-          title: "Харилцагч",
-          data: {
-            labels: [labels[currentMonth - 1]],
-            datasets: [
-              {
-                display: false,
-                label: "2023",
-                data: [
-                  countUnique(
-                    orders[currentMonth].map((order) => order.customer_id)
-                  ),
-                ],
-                backgroundColor: "#eded21",
-                barPercentage: 0.2,
-              },
-            ],
-          },
-          maxScale: 500,
-        },
-        order: {
-          title: "Захиалга",
-          data: {
-            labels: [labels[currentMonth - 1]],
-            datasets: [
-              {
-                display: false,
-                data: [orders[currentMonth].length],
-                backgroundColor: "#3FDCFF",
-                barPercentage: 0.2,
-              },
-            ],
-          },
-          maxScale: 4_000,
-        },
-        totalAmount: {
-          title: "Нийт дүн",
-          data: {
-            labels: [labels[currentMonth - 1]],
-            datasets: [
-              {
-                display: false,
-                data: [
-                  orders[currentMonth].reduce(
-                    (acc, cur) => acc + cur.grand_total,
-                    0
-                  ),
-                ],
-                barPercentage: 0.2,
-              },
-            ],
-          },
-          maxScale: 1_000_000_000,
-        },
-      };
-      setStats(newBarStat);
-    }
-  };
+      },
+    };
 
-  // Line Chart
-  const lineChartData = () => {
-    if (currentMonth === 13) {
-      const customerRes = [];
-      const orderAmountRes = [];
-      const totalAmountRes = [];
+    const dailyMerchantCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-      Object.keys(statsDaily).map((key) => {
-        orderAmountRes.push(statsDaily[key].map((order) => order.customer_id));
-      });
+    const deliveredDailyMerchantCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-      const newLineStat = {
-        customer: {
-          title: "Харилцагч",
-          data: {
-            labels: lineLabels,
-            datasets: [
-              {
-                display: false,
-                label: "Нийт",
-                data: {},
-                backgroundColor: "#eded21",
-                borderColor: "#eded21",
-                pointStyle: true,
-              },
-            ],
-          },
-          maxScale: 200,
-        },
-        order: {
-          title: "Захиалга",
-          data: {
-            labels: lineLabels,
-            datasets: [
-              {
-                display: false,
-                label: "Нийт",
-                data: {},
-                backgroundColor: "#3FDCFF",
-                borderColor: "#3FDCFF",
-                pointStyle: true,
-              },
-            ],
-          },
-          maxScale: 200,
-        },
-        totalAmount: {
-          title: "Нийт дүн",
-          data: {
-            labels: lineLabels,
-            datasets: [
-              {
-                display: false,
-                label: "Нийт",
-                data: {},
-                backgroundColor: "#FFB40F",
-                borderColor: "#FFB40F",
-                pointStyle: true,
-              },
-            ],
-          },
-          maxScale: 200,
-        },
-      };
-      // setStatsDaily(newLineStat);
-    }
-  };
+    const dailyOrderCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
+    const deliveredDailyOrderCountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-  // Average Row
-  const calculateAverageRow = () => {
-    const newMonthlyStats = { ...monthlyStats };
-    const newDailyStats = { ...dailyStats };
+    const dailyOrderAmountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
+    const deliveredDailyOrderAmountByMonth = Array.from(
+      Array(new Date().getMonth() + 1)
+    ).map(() => Array.from(Array(31)).map(() => 0));
 
-    const averageMonthlyMerchRes = [];
-    const averageMonthlyOrderRes = [];
-    const averageMonthlyTotalRes = [];
+    const dailyMerchantCount = Array.from(Array(31)).map(() => 0);
+    const deliveredDailyMerchantCount = Array.from(Array(31)).map(() => 0);
 
-    const averageDailylyMerchRes = [];
-    const averageDailylyOrderRes = [];
-    const averageDailylyTotalRes = [];
+    const dailyOrderCount = Array.from(Array(31)).map(() => 0);
+    const deliveredDailyOrderCount = Array.from(Array(31)).map(() => 0);
+
+    const dailyOrderAmount = Array.from(Array(31)).map(() => 0);
+    const deliveredOrderAmount = Array.from(Array(31)).map(() => 0);
 
     for (let i = 1; i <= new Date().getMonth() + 1; i++) {
-      averageMonthlyMerchRes.push(
-        countUnique(orders[i].map((order) => order.customer_id))
-      );
-      averageMonthlyOrderRes.push(orders[i].length);
-      averageMonthlyTotalRes.push(
-        orders[i].reduce((acc, cur) => acc + cur.grand_total, 0)
+      let currentOrders = orders[i];
+
+      if (currentVendor.id) {
+        currentOrders = currentOrders.filter(
+          (order) => order.supplier_id === currentVendor.id
+        );
+      }
+
+      if (currentStatus > 0) {
+        currentOrders = currentOrders.filter(
+          (order) => order.status === currentStatus
+        );
+      }
+
+      for (let j = 1; j <= 31; j++) {
+        dailyMerchantCountByMonth[i - 1][j - 1] += countUnique(
+          currentOrders
+            .filter((order) => new Date(order.order_date).getDate() === j)
+            .map((order) => order.customer_id)
+        );
+        deliveredDailyMerchantCountByMonth[i - 1][j - 1] += countUnique(
+          currentOrders
+            .filter(
+              (order) =>
+                order.status === 3 && new Date(order.order_date).getDate() === j
+            )
+            .map((order) => order.customer_id)
+        );
+        dailyOrderCountByMonth[i - 1][j - 1] += currentOrders.filter(
+          (order) => new Date(order.order_date).getDate() === j
+        ).length;
+        deliveredDailyOrderCountByMonth[i - 1][j - 1] += currentOrders.filter(
+          (order) =>
+            order.status === 3 && new Date(order.order_date).getDate() === j
+        ).length;
+        dailyOrderAmountByMonth[i - 1][j - 1] += currentOrders
+          .filter((order) => new Date(order.order_date).getDate() === j)
+          .reduce((acc, cur) => acc + cur.grand_total, 0);
+        deliveredDailyOrderAmountByMonth[i - 1][j - 1] += currentOrders
+          .filter(
+            (order) =>
+              order.status === 3 && new Date(order.order_date).getDate() === j
+          )
+          .reduce((acc, cur) => acc + cur.grand_total, 0);
+        dailyMerchantCount[j - 1] += countUnique(
+          currentOrders
+            .filter((order) => new Date(order.order_date).getDate() === j)
+            .map((order) => order.customer_id)
+        );
+        deliveredDailyMerchantCount[j - 1] += countUnique(
+          currentOrders
+            .filter(
+              (order) =>
+                order.status === 3 && new Date(order.order_date).getDate() === j
+            )
+            .map((order) => order.customer_id)
+        );
+        dailyOrderCount[j - 1] += currentOrders.filter(
+          (order) => new Date(order.order_date).getDate() === j
+        ).length;
+        deliveredDailyOrderCount[j - 1] += currentOrders.filter(
+          (order) =>
+            order.status === 3 && new Date(order.order_date).getDate() === j
+        ).length;
+        dailyOrderAmount[j - 1] += currentOrders
+          .filter((order) => new Date(order.order_date).getDate() === j)
+          .reduce((acc, cur) => acc + cur.grand_total, 0);
+        deliveredOrderAmount[j - 1] += currentOrders
+          .filter(
+            (order) =>
+              order.status === 3 && new Date(order.order_date).getDate() === j
+          )
+          .reduce((acc, cur) => acc + cur.grand_total, 0);
+      }
+    }
+
+    for (const key in result) {
+      const lineData = result[key].data.datasets;
+
+      switch (key) {
+        case "merchants":
+          lineData[0].data =
+            currentMonth < 13
+              ? dailyMerchantCountByMonth[currentMonth - 1]
+              : dailyMerchantCount;
+          lineData[1].data =
+            currentMonth < 13
+              ? deliveredDailyMerchantCountByMonth[currentMonth - 1]
+              : deliveredDailyMerchantCount;
+          break;
+        case "orders":
+          lineData[0].data =
+            currentMonth < 13
+              ? dailyOrderCountByMonth[currentMonth - 1]
+              : dailyOrderCount;
+          lineData[1].data =
+            currentMonth < 13
+              ? deliveredDailyOrderCountByMonth[currentMonth - 1]
+              : deliveredDailyOrderCount;
+          break;
+        case "totalAmount":
+          lineData[0].data =
+            currentMonth < 13
+              ? dailyOrderAmountByMonth[currentMonth - 1]
+              : dailyOrderAmount;
+          lineData[1].data =
+            currentMonth < 13
+              ? deliveredDailyOrderAmountByMonth[currentMonth - 1]
+              : deliveredOrderAmount;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return result;
+  }, [orders, currentMonth, currentStatus, currentVendor]);
+
+  const monthlyRowStats = useMemo(() => {
+    const result = {
+      merchants: {
+        title: "Сарын дундаж мерчант",
+        data: 0,
+      },
+      orders: {
+        title: "Сарын дундаж захиалга",
+        data: 0,
+      },
+      totalAmount: {
+        title: "Сарын дундаж борлуулалт",
+        data: 0,
+      },
+    };
+
+    for (const key in barStats) {
+      const data = barStats[key].data.datasets[0].data;
+
+      result[key].data = Math.round(
+        data.reduce((acc, cur) => acc + cur, 0) / (new Date().getMonth() + 1)
       );
     }
 
-    // console.log(averageMonthlyTotalRes);
+    return result;
+  }, [barStats]);
 
-    if (currentMonth === 13) {
-      newMonthlyStats.merchant.stat =
-        averageMonthlyMerchRes.reduce((acc, cur) => acc + cur, 0) /
-        averageMonthlyMerchRes.length;
-      newMonthlyStats.order.stat =
-        averageMonthlyOrderRes.reduce((acc, cur) => acc + cur, 0) /
-        averageMonthlyOrderRes.length;
-      newMonthlyStats.totalAmount.stat =
-        averageMonthlyTotalRes.reduce((acc, cur) => acc + cur, 0) /
-        averageMonthlyTotalRes.length;
-    } else {
-      newMonthlyStats.merchant.stat = averageMonthlyMerchRes[currentMonth - 1];
-      newMonthlyStats.order.stat = averageMonthlyOrderRes[currentMonth - 1];
-      newMonthlyStats.totalAmount.stat =
-        averageMonthlyTotalRes[currentMonth - 1];
+  const dailyRowStats = useMemo(() => {
+    const result = {
+      merchants: {
+        title: "Өдрийн дундаж мерчант",
+        data: 0,
+      },
+      orders: {
+        title: "Өдрийн дундаж захиалга",
+        data: 0,
+      },
+      totalAmount: {
+        title: "Өдрийн дундаж борлуулалт",
+        data: 0,
+      },
+    };
+
+    for (const key in lineStats) {
+      const data = lineStats[key].data.datasets[0].data;
+
+      result[key].data = Math.round(
+        data.reduce((acc, cur) => acc + cur, 0) /
+          data.filter((singleData) => singleData > 0).length
+      );
     }
 
-    setMonthlyStats(newMonthlyStats);
-  };
+    return result;
+  }, [lineStats]);
 
-  // console.log(monthlyStats);
-
-  useEffect(() => {
-    barChartData();
-    lineChartData();
-    calculateAverageRow();
-  }, [currentMonth, orders]);
 
   return (
     <>
-      <FilterHeader
-        vendors={vendors}
-        states={states}
-        statuses={statuses}
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-        removeMonth
-      />
+      <FilterHeader removeMonth />
 
       <div className={classes.mauDauContent}>
         <div className={classes.chartContent}>
           <div className={classes.barContent}>
-            {Object.keys(stats).map((key, index) => {
+            {Object.keys(barStats).map((key, index) => {
               return (
                 <MauDauBarChart
                   key={`mau-dau-bar-chart-${index}`}
-                  data={stats[key].data}
-                  title={stats[key].title}
-                  maxScale={stats[key].maxScale}
+                  data={barStats[key].data}
+                  title={barStats[key].title}
                 />
               );
             })}
           </div>
           <div className={classes.lineContent}>
-            {/* {Object.keys(statsDaily).map((key, index) => {
+            {Object.keys(lineStats).map((key, index) => {
               return (
                 <MauDauLineChart
                   key={`mau-dau-line-chart-${index}`}
-                  data={statsDaily[key].data}
-                  title={statsDaily[key].title}
-                  maxScale={statsDaily[key].maxScale}
+                  data={lineStats[key].data}
+                  title={lineStats[key].title}
+                  style={{ width: 300 }}
                 />
               );
             })} */}
           </div>
         </div>
-        {/* Average */}
-
-        <MauDauRow monthlyStats={monthlyStats} />
+        <MauDauRow
+          monthlyRowStats={monthlyRowStats}
+          dailyRowStats={dailyRowStats}
+        />
       </div>
     </>
   );

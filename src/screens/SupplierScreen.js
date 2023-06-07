@@ -1,109 +1,131 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import classes from "./SupplierScreen.module.css";
 import { SupplierTable } from "../components/Supplier/SupplierTable";
 import { TypeChart } from "../components/Supplier/TypeChart";
 import { FilterHeader } from "../components/Filters";
 import { MerchantTable } from "../components/Supplier/MerchantTable";
 import { countUnique } from "../utils/countUnique";
+import { SupplierRow } from "../components/Supplier/SupplierRow";
+import { Context } from "../contexts/Context";
 
-export const SupplierScreen = ({ orders, vendors, merchants, statuses }) => {
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
-  const [currentStatus, setCurrentStatus] = useState(0);
+export const SupplierScreen = () => {
+  const {
+    orders,
+    currentMonth,
+    setCurrentMonth,
+    currentStatus,
+    currentVendor,
+    vendors,
+    merchants,
+  } = useContext(Context);
 
-  const [states, setStates] = useState([]);
-  const [avStatuses, setAvStatuses] = useState([]);
+  useEffect(() => {
+    setCurrentMonth(new Date().getMonth() + 1);
 
-  const [totalStat, setTotalStat] = useState({});
-  const [vendorStat, setVendorStat] = useState([]);
-  const [typeStat, setTypeStat] = useState({ gtAmount: 0, horecaAmount: 0 });
-  const [merchantStat, setMerchantStat] = useState([]);
+    return () => {
+      setCurrentMonth(new Date().getMonth() + 1);
+    };
+  }, []);
 
-  const calculateRow = () => {
-    const currentOrders = orders[currentMonth];
-
-    const newTotalStat = {
-      total: {
-        stat:
-          currentStatus === 0
-            ? currentOrders.length
-            : currentOrders.filter((order) => order.status === currentStatus).length,
+  const rowData = useMemo(() => {
+    const result = {
+      orders: {
         label: "Захиалга",
+        data: 0,
+        goal: 0,
       },
       totalAmount: {
-        stat:
-          currentStatus === 0
-            ? currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
-            : currentOrders
-                .filter((order) => order.status === currentStatus)
-                .reduce((acc, cur) => acc + cur.grand_total, 0),
         label: "Нийт дүн",
+        data: 0,
+        goal: 0,
       },
-      delivered: {
+      deliveredAmount: {
         label: "Хүргэсэн",
-        stat:
-          currentStatus === 0
-            ? currentOrders
-                .filter((order) => order.status === 3)
-                .reduce((acc, cur) => acc + cur.grand_total, 0)
-            : currentOrders
-                .filter((order) => order.status === currentStatus)
-                .filter((order) => order.status === 3)
-                .reduce((acc, cur) => acc + cur.grand_total, 0),
-        goal: 1_392_000_000,
+        data: 0,
+        goal: 0,
       },
-      customers: {
+      activeCustomers: {
         label: "Идэвхитэй харилцагч",
-        stat:
-          currentStatus === 0
-            ? countUnique(currentOrders.map((order) => order.customer_id))
-            : countUnique(
-                currentOrders
-                  .filter((order) => order.status === currentStatus)
-                  .map((order) => order.customer_id)
-              ),
+        data: 0,
+        goal: 0,
       },
       suppliers: {
         label: "Нийлүүлэгч",
-        stat:
-          currentStatus === 0
-            ? countUnique(currentOrders.map((order) => order.supplier_id))
-            : countUnique(
-                currentOrders
-                  .filter((order) => order.status === currentStatus)
-                  .map((order) => order.supplier_id)
-              ),
+        data: 0,
+        goal: 0,
+      },
+      orderFrequency: {
+        label: "Захиалгын давтамж",
+        data: 0,
+        goal: 0,
       },
       deliveryRate: {
         label: "Хүргэлтийн хувь",
-        stat:
-          (currentStatus === 0
-            ? Math.round(
-                (currentOrders
-                  .filter((order) => order.status === 3)
-                  .reduce((acc, cur) => acc + cur.grand_total, 0) *
-                  100) /
-                  currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0)
-              ) || 0
-            : Math.round(
-                (currentOrders
-                  .filter((order) => order.status === currentStatus)
-                  .filter((order) => order.status === 3)
-                  .reduce((acc, cur) => acc + cur.grand_total, 0) *
-                  100) /
-                  currentOrders
-                    .filter((order) => order.status === currentStatus)
-                    .reduce((acc, cur) => acc + cur.grand_total, 0)
-              ) || 0) + "%",
+        data: 0,
+        goal: 0,
       },
     };
-    setTotalStat(newTotalStat);
-  };
 
-  const calculateVendors = () => {
-    const newVendorStats = [];
+    let currentOrders =
+      currentMonth === 13 ? orders[new Date().getMonth() + 1] : orders[currentMonth];
+
+    if (currentVendor.id) {
+      currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
+    }
+
+    if (currentStatus > 0) {
+      currentOrders = currentOrders.filter((order) => order.status === currentStatus);
+    }
+
+    for (const key in result) {
+      const singleStat = result[key];
+
+      switch (key) {
+        case "orders":
+          singleStat.data = currentOrders.length;
+          break;
+        case "totalAmount":
+          singleStat.data = currentOrders.reduce((acc, cur) => acc + cur.grand_total, 0);
+          break;
+        case "deliveredAmount":
+          singleStat.data = currentOrders
+            .filter((order) => order.status === 3)
+            .reduce((acc, cur) => acc + cur.grand_total, 0);
+          break;
+        case "activeCustomers":
+          singleStat.data = countUnique(currentOrders.map((order) => order.customer_id));
+          break;
+        case "suppliers":
+          singleStat.data = countUnique(currentOrders.map((order) => order.supplier_id));
+          break;
+        case "deliveryRate":
+          singleStat.data =
+            Math.round((result.deliveredAmount.data * 100) / result.totalAmount.data) + "%";
+          break;
+        default:
+          break;
+      }
+    }
+
+    return result;
+  }, [orders, currentMonth, currentStatus, currentVendor]);
+
+  const supplierTableData = useMemo(() => {
+    const result = [];
+
+    let currentOrders =
+      currentMonth === 13 ? orders[new Date().getMonth() + 1] : orders[currentMonth];
+
+    if (currentVendor.id) {
+      currentOrders = currentOrders.filter((order) => order.supplier_id === currentVendor.id);
+    }
+
+    if (currentStatus > 0) {
+      currentOrders = currentOrders.filter((order) => order.status === currentStatus);
+    }
 
     for (const vendor of vendors) {
-      const stat = {
+      const singleData = {
         name: vendor.name,
         total: 0,
         delivered: 0,
@@ -111,158 +133,120 @@ export const SupplierScreen = ({ orders, vendors, merchants, statuses }) => {
         order: 0,
         merchants: 0,
         rate: 0,
+        type: "others",
+        status: 0,
+        tradeshops: [],
       };
 
       const merchants = [];
-
-      for (const order of orders[currentMonth]) {
+      for (const order of currentOrders) {
         if (order.supplier_id === vendor.id) {
           merchants.push(order.customer_id);
-          stat.total += order.grand_total;
-          stat.order++;
+          singleData.total += order.grand_total;
+          singleData.order++;
+          singleData.status = order.status;
+          singleData.tradeshops.push(order.tradeshop_id);
+
           if (order.status === 3) {
-            stat.delivered += order.grand_total;
+            singleData.delivered += order.grand_total;
           }
+
           if (order.status === 5) {
-            stat.canceled += order.grand_total;
+            singleData.canceled += order.grand_total;
+          }
+
+          if (["1", "2", "3", "4", "5"].includes(order.business_type_id)) {
+            singleData.type = "gt";
+          }
+
+          if (["6", "7", "8", "9", "10", "11", "12", "13", "14"].includes(order.business_type_id)) {
+            singleData.type = "horeca";
           }
         }
       }
 
-      stat.rate = (stat.delivered * 100) / stat.total;
-      stat.merchants = countUnique(merchants);
+      singleData.rate = (singleData.delivered * 100) / singleData.total;
+      singleData.merchants = countUnique(merchants);
 
-      newVendorStats.push(stat);
+      result.push(singleData);
     }
 
-    let result;
-    if (currentStatus === 0) {
-      result = newVendorStats.filter((stat) => stat.total !== 0);
-    } else if (currentStatus === 3) {
-      result = newVendorStats
-        .filter((stat) => stat.total !== 0)
-        .filter((stat) => stat.delivered > 0);
-    } else if (currentStatus === 5) {
-      result = newVendorStats
-        .filter((stat) => stat.total !== 0)
-        .filter((stat) => stat.canceled > 0);
+    return result.filter((data) => data.total > 0);
+  }, [orders, currentMonth, vendors, currentStatus, currentVendor]);
+
+  const typeChartData = useMemo(() => {
+    const result = {
+      gtAmount: 0,
+      horecaAmount: 0,
+    };
+
+    const currentData = supplierTableData;
+
+    result.gtAmount = currentData
+      .filter((data) => data.type === "gt")
+      .reduce((acc, cur) => acc + cur.total, 0);
+
+    result.horecaAmount = currentData
+      .filter((data) => data.type === "horeca")
+      .reduce((acc, cur) => acc + cur.total, 0);
+
+    return result;
+  }, [supplierTableData]);
+
+  const merchantTableData = useMemo(() => {
+    const result = [];
+
+    const currentOrders =
+      currentMonth === 13 ? orders[new Date().getMonth() + 1] : orders[currentMonth];
+
+    let currentMerchants = [];
+    for (const data of supplierTableData) {
+      currentMerchants = [...currentMerchants, ...data.tradeshops];
+    }
+    currentMerchants = [...new Set(currentMerchants)];
+
+    for (let i = 0; i < currentMerchants.length; i++) {
+      currentMerchants[i] = merchants.find((merch) => merch.tradeshop_id === currentMerchants[i]);
     }
 
-    setVendorStat(result);
-  };
+    currentMerchants = currentMerchants.filter((merch) => merch !== undefined);
 
-  const calculateType = () => {
-    const newTypeStat = { ...typeStat };
+    if (currentMerchants.length === 0) return result;
 
-    const gtIds = ["1", "2", "3", "4", "5"];
-    const horekaIds = ["6", "7", "8", "9", "10", "11", "12", "13", "14"];
-
-    if (currentStatus === 0) {
-      newTypeStat.gtAmount = orders[currentMonth]
-        .filter((order) => gtIds.includes(order.business_type_id))
-        .reduce((acc, cur) => acc + cur.grand_total, 0);
-      newTypeStat.horecaAmount = orders[currentMonth]
-        .filter((order) => horekaIds.includes(order.business_type_id))
-        .reduce((acc, cur) => acc + cur.grand_total, 0);
-    } else {
-      newTypeStat.gtAmount = orders[currentMonth]
-        .filter((order) => gtIds.includes(order.business_type_id))
-        .filter((order) => order.status === currentStatus)
-        .reduce((acc, cur) => acc + cur.grand_total, 0);
-      newTypeStat.horecaAmount = orders[currentMonth]
-        .filter((order) => horekaIds.includes(order.business_type_id))
-        .filter((order) => order.status === currentStatus)
-        .reduce((acc, cur) => acc + cur.grand_total, 0);
-    }
-
-    setTypeStat(newTypeStat);
-  };
-
-  const calculateMerchant = () => {
-    const newMerchantStat = [];
-
-    for (const merchant of merchants) {
-      const stat = {
+    for (const merchant of currentMerchants) {
+      const singleStat = {
         name: merchant.tradeshop_name,
         total: 0,
         order: 0,
         rate: 0,
       };
 
-      for (const order of orders[currentMonth]) {
+      for (const order of currentOrders) {
         if (order.tradeshop_id === merchant.tradeshop_id) {
-          stat.total += order.grand_total;
-          stat.order++;
+          singleStat.total += order.grand_total;
+          singleStat.order++;
         }
       }
 
-      newMerchantStat.push(stat);
+      result.push(singleStat);
     }
 
-    setMerchantStat(newMerchantStat.filter((stat) => stat.total !== 0));
-  };
-
-  useEffect(() => {
-    const newStatuses = [];
-
-    for (const status of statuses) {
-      if (status.OrderStatusID === 3 || status.OrderStatusID === 5) newStatuses.push(status);
-    }
-
-    setAvStatuses(newStatuses);
-  }, [statuses]);
-
-  useEffect(() => {
-    calculateMerchant();
-  }, [currentMonth, orders[currentMonth], merchants]);
-
-  useEffect(() => {
-    calculateVendors();
-    calculateRow();
-    calculateType();
-  }, [currentMonth, orders[currentMonth], currentStatus]);
+    return result;
+  }, [orders, currentMonth, merchants, supplierTableData]);
 
   return (
     <div className={classes.screenWrapper}>
-      <FilterHeader
-        vendors={vendors}
-        states={states}
-        statuses={avStatuses}
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-        currentStatus={currentStatus}
-        setCurrentStatus={setCurrentStatus}
-      />
+      <FilterHeader />
 
       <div className={classes.suppliersContent}>
-        <div className={classes.stats}>
-          {Object.keys(totalStat).map((key, index) => {
-            const stat = totalStat[key];
-
-            return (
-              <div key={`stat-box-${index}`} className={classes.singleStat}>
-                <h2>{stat.label}</h2>
-                <h1
-                  style={{
-                    color: stat.goal ? (stat.goal > stat.stat ? "#D64554" : "#1AAB40") : "inherit",
-                  }}
-                >
-                  {stat.stat >= 1_000_000 ? Math.round(stat.stat / 1_000_000) + "M" : stat.stat}
-                </h1>
-                {stat.goal && (
-                  <p>Goal: {stat.goal >= 1_000_00 ? stat.goal / 1_000_000 + "M" : stat.goal}</p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <SupplierRow data={rowData} />
 
         <div className={classes.contentWrapper}>
-          <SupplierTable vendorStat={vendorStat} />
+          <SupplierTable vendorStat={supplierTableData} />
 
           <div className={classes.leftContentWrapper}>
-            <TypeChart typeStat={typeStat} />
-            <MerchantTable merchantStat={merchantStat} />
+            <TypeChart typeStat={typeChartData} />
+            <MerchantTable merchantStat={merchantTableData} />
           </div>
         </div>
       </div>

@@ -1,34 +1,23 @@
 import classes from "./FilterHeader.module.css";
-import { MonthFilter, VendorFilter, TypeFilter, StateFilter, StatusFilters } from "./";
+import {
+  MonthFilter,
+  VendorFilter,
+  TypeFilter,
+  StateFilter,
+  StatusFilters,
+} from "./";
 
-export const FilterHeader = ({
-  vendors,
-  states,
-  statuses,
-  currentMonth,
-  setCurrentMonth,
-  removeMonth = false,
-  currentStatus,
-  setCurrentStatus,
-}) => {
+export const FilterHeader = ({ removeMonth = false }) => {
   return (
     <div className={classes.filterHeader}>
       <div className={classes.dropdownFilters}>
-        <VendorFilter vendors={vendors} />
+        <VendorFilter />
         <TypeFilter />
-        <StateFilter states={states} />
+        <StateFilter />
       </div>
 
-      <StatusFilters
-        statuses={statuses}
-        currentStatus={currentStatus}
-        setCurrentStatus={setCurrentStatus}
-      />
-      <MonthFilter
-        currentMonth={currentMonth}
-        setCurrentMonth={setCurrentMonth}
-        removeMonth={removeMonth}
-      />
+      <StatusFilters />
+      <MonthFilter removeMonth={removeMonth} />
     </div>
   );
 };

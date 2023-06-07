@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import classes from "./MonthFilter.module.css";
+import { Context } from "../../contexts/Context";
 
-export const MonthFilter = ({
-  currentMonth,
-  setCurrentMonth,
-  removeMonth = false,
-}) => {
+export const MonthFilter = ({ removeMonth = false }) => {
+  const { currentMonth, setCurrentMonth } = useContext(Context);
+
   const months = [
     { label: "January", value: 1 },
     { label: "February", value: 2 },
