@@ -6,10 +6,6 @@ import { SupplierTable } from "../components/PickPack/SupplierTable";
 import { FilterHeader } from "../components/Filters";
 
 export const PickPackScreen = ({ vendors }) => {
-  const [currentVendors, setCurrentVendors] = useState({});
-
-  const [statuses, setStatuses] = useState([]);
-  const [states, setStates] = useState([]);
   const [labels, setlabels] = useState([
     "Mon",
     "Tueshdbhdbhb",
@@ -65,10 +61,7 @@ export const PickPackScreen = ({ vendors }) => {
     datasets: [
       {
         label: "Weekly Sales",
-        data: [
-          19, 15, 5, 12, 3, 7, 19, 15, 5, 12, 3, 7, 19, 15, 5, 12, 3, 7, 19, 15,
-          5, 12, 3, 7,
-        ],
+        data: [19, 15, 5, 12, 3, 7, 19, 15, 5, 12, 3, 7, 19, 15, 5, 12, 3, 7, 19, 15, 5, 12, 3, 7],
         backgroundColor: color,
         cutout: "65%",
       },
@@ -77,13 +70,7 @@ export const PickPackScreen = ({ vendors }) => {
 
   return (
     <div className={classes.screenWrapper}>
-      <FilterHeader
-        vendors={vendors}
-        states={states}
-        statuses={statuses}
-        currentVendors={currentVendors}
-        setCurrentVendors={setCurrentVendors}
-      />
+      <FilterHeader />
       <div className={classes.pickPackContent}>
         <PickPackRow />
         <div className={classes.pickPackDataContent}>

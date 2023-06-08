@@ -16,8 +16,8 @@ export const SupplierRow = ({ data }) => {
             >
               {stat.data >= 1_000_000 ? Math.round(stat.data / 1_000_000) + "M" : stat.data}
             </h1>
-            {stat.goal && (
-              <p>Goal: {stat.goal >= 1_000_00 ? stat.goal / 1_000_000 + "M" : stat.goal}</p>
+            {stat.goal > 0 && (
+              <p>Goals: {stat.goal >= 1_000_00 ? stat.goal / 1_000_000 + "M" : stat.goal}</p>
             )}
           </div>
         );

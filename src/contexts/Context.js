@@ -91,6 +91,8 @@ export const ContextProvider = ({ children }) => {
       });
       const data = await res.json();
 
+      console.log(data);
+
       setVendors(
         data.data.sort((a, b) => {
           if (a.name > b.name) return 1;

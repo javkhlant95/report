@@ -1,29 +1,26 @@
+.screenWrapper {
+  width: 100%;
+  height: 100%;
+}
+
 .mauDauContent {
   background-color: #e9ecef;
   padding: 15px;
   width: 100%;
-  height: 88%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .chartContent {
-  margin-bottom: 15px;
   display: flex;
-  height: calc(88% - 15px);
   gap: 15px;
+  height: 100%;
 }
 
 .barContent {
   width: 40%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }
 
 .lineContent {
   width: calc(60% - 15px);
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }

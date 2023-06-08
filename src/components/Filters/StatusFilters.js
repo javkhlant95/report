@@ -34,6 +34,8 @@ export const StatusFilters = () => {
       }
     }
 
+    setCurrentIndex(0);
+
     return result;
   }, [orders, currentMonth, statuses, currentVendor]);
 

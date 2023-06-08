@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  height: 13%;
+  height: 90px;
 }
 
 .singleStat {
@@ -29,5 +29,5 @@
 .singleStat p {
   color: #252423;
   font-size: 12px;
-  margin-top: -4px;
+  margin-top: 4px;
 }
