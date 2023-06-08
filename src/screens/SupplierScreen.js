@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import classes from "./SupplierScreen.module.css";
 import { SupplierTable } from "../components/Supplier/SupplierTable";
 import { TypeChart } from "../components/Supplier/TypeChart";
@@ -32,7 +32,7 @@ export const SupplierScreen = () => {
       orders: {
         label: "Захиалга",
         data: 0,
-        goal: 0,
+        goal: 100,
       },
       totalAmount: {
         label: "Нийт дүн",

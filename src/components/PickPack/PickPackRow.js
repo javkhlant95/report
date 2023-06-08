@@ -10,7 +10,7 @@ export const PickPackRow = () => {
 
             <h1>2174</h1>
 
-            {index === 1 && <p>Goal</p>}
+            {index === 1 && <p>0</p>}
           </div>
         );
       })}

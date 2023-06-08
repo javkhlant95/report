@@ -5,13 +5,14 @@
 
 .suppliersContent {
   width: 100%;
-  height: 88%;
+  height: calc(100% - 100px);
   padding: 20px;
+  overflow-y: auto;
 }
 
 .contentWrapper {
   width: 100%;
-  height: calc(87% - 20px);
+  height: 700px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

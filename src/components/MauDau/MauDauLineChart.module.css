@@ -1,7 +1,6 @@
 .line {
   background-color: #fff;
   width: 100%;
-  height: calc((100% - 30px) / 3);
-  display: flex;
-  justify-content: center;
+  height: 250px;
+  margin-bottom: 15px;
 }

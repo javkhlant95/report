@@ -1,6 +1,6 @@
 .row {
   width: 100%;
-  flex: 1;
+  height: 190px;
 }
 
 .title {
@@ -11,7 +11,7 @@
 
 .boxs {
   width: 100%;
-  height: calc(100% - 46px);
+  height: calc(100% - 36px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,5 +40,5 @@
 .singleBox p {
   color: #252423;
   font-size: 12px;
-  margin-top: -4px;
+  margin-top: 4px;
 }

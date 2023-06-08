@@ -5,10 +5,10 @@
 
 .managementContent {
   width: 100%;
-  height: 88%;
+  height: calc(100% - 100px);
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  overflow-y: scroll;
+  gap: 25px;
+  overflow-y: auto;
 }
